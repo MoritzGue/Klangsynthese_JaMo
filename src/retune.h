@@ -1,31 +1,42 @@
 #ifndef RETUNE_H
 #define RETUNE_H
+#include <iostream>
+#include <stdlib.h>
+#include <cmath>
+
+using std::cout;
+using std::endl;
+using namespace std;
 
 
-class retune
+class Retune
 {
 
  public:
 
   //! The default constructor creates an allpass filter.
-  retune();
+  Retune();
 
   //! Class destructor.
-  ~retune();
+  ~Retune();
 
   void setC(double f1);
+    double getC(){return c;};
 
-  double process(double xn);
+    double process(double xn);
  
  private:
+    
   double f1;
   double c;
+    double c_temp;
   double xn_1;
   double yn_1;
-  const double pi = 3.1415926535897;
+  //const double pi = 3.1415926535897;
+
 };
 
-inline double retune::process(double xn)
+inline double Retune::process(double xn)
 {
     //double xn = input;
     double yn = (c * xn) + xn_1 - (c * yn_1);

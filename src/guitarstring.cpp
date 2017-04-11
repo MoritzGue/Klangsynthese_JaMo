@@ -29,6 +29,7 @@ Guitarstring::Guitarstring()
   envelopeGenerator->setSampleRate(44100.0);
 
   loopFilter = new OneZero(-1.0);
+    retuneFilter1 = new Retune();
 
   delayLine1 = new DelayLineSimple(44100.0, 44100);
 
@@ -37,13 +38,17 @@ Guitarstring::Guitarstring()
 
 double Guitarstring::getNextSample()
 {
-  return delayLine1->process(loopFilter->process(delayLine1->lastOut()*0.989) + (oscillator1->nextSample() * envelopeGenerator->nextSample()));
+  double yn = delayLine1->process(retuneFilter1->process(loopFilter->process(delayLine1->lastOut()*0.989) + (oscillator1->nextSample() * envelopeGenerator->nextSample())));
+    
+    return yn;
 }
 
 void Guitarstring::setPitchInHz(double frequency){
-
-  delayLine1->setDelayInSamples(44100.0/frequency);
+    this->frequency = frequency;
+    delayLine1->setDelayInSamples(44100.0/frequency);
+    retuneFilter1->setC(frequency);
 }
+
 void Guitarstring::pluck(double velocity){
   this->velocity = velocity;
   oscillator1->setAmplitude(velocity);

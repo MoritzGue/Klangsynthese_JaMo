@@ -146,10 +146,11 @@ double DelayLineSimple::process(double input)
                 int nReadIndex_1 = m_nReadIndex - 1;
                 if(nReadIndex_1 < 0)
                     nReadIndex_1 = m_nBufferSize - 1; // m_nBufferSize is last location
-                
+    
+                /*
                 //get y(n-1)
                 double yn_1 = m_pBuffer[nReadIndex_1];
-                
+    
                 //interpolate: (0, yn) and (1, yn_1) by the amount of fracDelay
                 double fFracDelay = m_fDelayInSamples - (int)m_fDelayInSamples;
                 
@@ -161,7 +162,7 @@ double DelayLineSimple::process(double input)
                     yn = xn;
                 else
                     yn = fInterp;
-    
+    */
     
                 //write the input to the delay
                 m_pBuffer[m_nWriteIndex] = xn;// + m_fFeedback*yn;

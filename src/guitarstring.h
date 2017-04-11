@@ -14,6 +14,7 @@
 #include "OneZero.h"
 #include "oscillator.h"
 #include "adsr.h"
+#include "retune.h"
 
 class Guitarstring
 {
@@ -32,9 +33,11 @@ private:
   OneZero *loopFilter;
   Oscillator *oscillator1;
   EnvelopeGenerator *envelopeGenerator;
+    Retune *retuneFilter1;
 
   bool envelopeToggle;
   double velocity;
+    double frequency;
 
 };
 
