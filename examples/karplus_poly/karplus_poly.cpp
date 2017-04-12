@@ -5,7 +5,7 @@
  *
  *
  *
- * \author Moritz Gueldenring
+ * \author Moritz Gueldenring & Janek Newjoto
  *
  * \version $Revision: 0.5 $
  *
@@ -25,8 +25,9 @@
 
 
 #include "../../src/guitarstring.h"
-#include "../../src/midiman.h"
+#include "../../src/stringManager.h"
 #include "../../src/Biquad.h"
+#include "../../src/midimanPoly.h"
 
 using std::cout;
 using std::endl;
@@ -37,15 +38,15 @@ using namespace std;
 class KarplusSimple: public JackCpp::AudioIO {
 
 private:
-    MidiMan *midiMan;
-    Guitarstring *gitString1;
+    
+    StringManager *gitStrings;
     Biquad *lpFilter;
+    MidiManPoly *midiMan;
 
     int noteStatus;
     int noteNumber;
     int velocity;
 
-    bool envelopeToggle;
 
 public:
     /// Audio Callback Function:
@@ -62,17 +63,9 @@ public:
         noteStatus = midiMan->getStatus();
         noteNumber = midiMan->getNoteNumber();
         velocity = midiMan->getVelocity();
+        
+        gitStrings->setMidiData(noteStatus, noteNumber, velocity);
 
-        if (noteStatus == 144 && velocity) {
-            cout << "Note Status" << noteStatus << endl;
-            cout << "Velocity" << velocity << endl;
-            gitString1->setPitchInHz(midiMan->getMidiNoteInHertz(noteNumber, 440.0));
-            gitString1->pluck(midiMan->mapMidiVelocity(velocity,0.0,1.0));
-        }
-
-        if (noteStatus == -1){
-            gitString1->releaseString();
-        }
 
 
         /// LOOP over all output buffers
@@ -80,7 +73,7 @@ public:
         {
           for(int frameCNT = 0; frameCNT  < nframes; frameCNT++)
           {
-              outBufs[0][frameCNT] = gitString1->getNextSample();
+              outBufs[0][frameCNT] = gitStrings->getNextSample();
           }
 
         }
@@ -96,15 +89,14 @@ public:
         reserveInPorts(2);
         reserveOutPorts(2);
 
-        midiMan = new MidiMan();
-        envelopeToggle = true;
+        midiMan = new MidiManPoly();
 
         /// the biquad allocate
         lpFilter = new Biquad();
         /// set initial parameters
         lpFilter->setBiquad(bq_type_lowpass, 1000.0 / 44100.0, 0.707, 0);
-        gitString1 = new Guitarstring();
-
+        
+        gitStrings = new StringManager();
     }
 };
 
