@@ -7,7 +7,7 @@
  *
  *
  *
- * \author Moritz Güldenring/ Janek Newjoto
+ * \author Moritz Güldenring & Janek Newjoto
  *
  * \version
  *
@@ -34,35 +34,54 @@ Guitarstring::Guitarstring()
   delayLine1 = new DelayLineSimple(44100.0, 44100);
 
   envelopeToggle = true;
+    
+    isActive = false;
 }
 
 double Guitarstring::getNextSample()
 {
-  double yn = delayLine1->process(retuneFilter1->process(loopFilter->process(delayLine1->lastOut()*0.989) + (oscillator1->nextSample() * envelopeGenerator->nextSample())));
+  if (!isActive) return 0.0;
+    
+    double yn = delayLine1->process(retuneFilter1->process(loopFilter->process(delayLine1->lastOut()*0.95) + (oscillator1->nextSample() * envelopeGenerator->nextSample())));
     
     return yn;
 }
 
-void Guitarstring::setPitchInHz(double frequency){
-    this->frequency = frequency;
+void Guitarstring::setNoteNumber(int noteNumber){
+    
+    mNoteNumber = noteNumber;
+    cout << "NoteNUMBER" << mNoteNumber << endl;
+};
+
+
+void Guitarstring::pluck(int velocity)
+{
+    frequency = 440.00 * pow (2.0, (mNoteNumber - 69) / 12.0);
+    
     delayLine1->setDelayInSamples(44100.0/frequency);
     retuneFilter1->setC(frequency);
+    
+    this->velocity = velocity;
+    oscillator1->setAmplitude(velocity);
+    oscillator1->setMuted(false);
+
+    if (envelopeToggle == true){
+        envelopeGenerator->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
+        envelopeToggle = false;
+    }
 }
 
-void Guitarstring::pluck(double velocity){
-  this->velocity = velocity;
-  oscillator1->setAmplitude(velocity);
-  oscillator1->setMuted(false);
-
-  if (envelopeToggle == true){
-      envelopeGenerator->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
-      envelopeToggle = false;
-  }
+void Guitarstring::releaseString()
+{
+    if (envelopeToggle == false){
+        envelopeGenerator->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE);
+        envelopeToggle = true;
+    }
+    isActive = false;
+    cout << "RELEASE" << endl;
 }
 
-void Guitarstring::releaseString(){
-  if (envelopeToggle == false){
-  envelopeGenerator->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE);
-  envelopeToggle = true;
-  }
+void Guitarstring::setFree()
+{
+    isActive = false;
 }

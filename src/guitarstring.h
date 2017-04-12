@@ -16,28 +16,36 @@
 #include "adsr.h"
 #include "retune.h"
 
+using namespace std;
+
 class Guitarstring
 {
 public:
+    friend class StringManager;
+    
     Guitarstring();
 
     double getNextSample();
-    void setPitchInHz(double frequeny);
-    void pluck(double velocity);
+    void setNoteNumber(int noteNumber);
+    void setPitchInHz(int noteNumber);
+    void pluck(int velocity);
     void releaseString();
-
+    void setFree();
 
 private:
 
-  DelayLineSimple *delayLine1;
-  OneZero *loopFilter;
-  Oscillator *oscillator1;
-  EnvelopeGenerator *envelopeGenerator;
+    DelayLineSimple *delayLine1;
+    OneZero *loopFilter;
+    Oscillator *oscillator1;
+    EnvelopeGenerator *envelopeGenerator;
     Retune *retuneFilter1;
 
-  bool envelopeToggle;
-  double velocity;
+    bool envelopeToggle;
+    double velocity;
     double frequency;
+    int mNoteNumber;
+    int mVelocity;
+    bool isActive;
 
 };
 
