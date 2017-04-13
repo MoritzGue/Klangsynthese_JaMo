@@ -1,7 +1,7 @@
 /**
  * \file
  *
- * \brief This is a simple Karplus-Strong algorithm
+ * \brief This is a polyphonic Karplus-Strong algorithm
  *
  *
  *
@@ -28,6 +28,7 @@
 #include "../../src/stringManager.h"
 #include "../../src/Biquad.h"
 #include "../../src/midimanOld.h"
+#include "../../src/FFTConvolver/FFTConvolver.h"
 
 using std::cout;
 using std::endl;
@@ -35,7 +36,7 @@ using namespace std;
 
 
 
-class KarplusSimple: public JackCpp::AudioIO {
+class KarplusPoly: public JackCpp::AudioIO {
 
 private:
     
@@ -58,23 +59,12 @@ public:
                               audioBufVector outBufs){
 
 
-        
-
-
-
         /// LOOP over all output buffers
         for(unsigned int i = 0; i < 1; i++)
         {
           for(int frameCNT = 0; frameCNT  < nframes; frameCNT++)
           {
               processMIDI();
-              /*midiMan->doRtmidi();
-              
-              noteStatus = midiMan->getStatus();
-              noteNumber = midiMan->getNoteNumber();
-              velocity = midiMan->getVelocity();
-              
-              gitStrings->setMidiData(noteStatus, noteNumber, velocity);*/
               
               outBufs[0][frameCNT] = gitStrings->getNextSample();
           }
@@ -86,8 +76,8 @@ public:
     }
 
     /// Constructor
-    KarplusSimple() :
-        JackCpp::AudioIO("karplus_simple", 0,1){
+    KarplusPoly() :
+        JackCpp::AudioIO("karplus_poly", 0,1){
 
         reserveInPorts(2);
         reserveOutPorts(2);
@@ -125,7 +115,7 @@ int main(int argc, char *argv[]){
 
 
     /// initial ports from constructor created here.
-    KarplusSimple * t = new KarplusSimple();
+    KarplusPoly * t = new KarplusPoly();
 
     /// activate the client
     t->start();
