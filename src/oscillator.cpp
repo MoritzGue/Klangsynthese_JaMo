@@ -78,7 +78,6 @@ double Oscillator::nextSample() {
             double R2 = (float) rand() / (float) RAND_MAX;
             
             oscVal = ((float) sqrt( -2.0f * log( R1 )) * cos( 2.0f * mPI * R2 )) * mAmplitude;
-
     }
     mPhase += mPhaseIncrement;
     while (mPhase >= twoPI) {

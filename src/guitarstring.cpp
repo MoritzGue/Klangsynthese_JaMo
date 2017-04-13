@@ -22,35 +22,37 @@
 
 Guitarstring::Guitarstring()
 {
-  oscillator1 = new Oscillator(OSCILLATOR_MODE_NOISE);
-  oscillator1->setSampleRate(44100);
+    oscillator1 = new Oscillator(OSCILLATOR_MODE_NOISE);
+    oscillator1->setSampleRate(44100.0);
 
-  envelopeGenerator = new EnvelopeGenerator();
-  envelopeGenerator->setSampleRate(44100.0);
+    envelopeGenerator = new EnvelopeGenerator();
+    envelopeGenerator->setSampleRate(44100.0);
 
-  loopFilter = new OneZero(-1.0);
+    loopFilter = new OneZero(-1.0);
     retuneFilter1 = new Retune();
 
-  delayLine1 = new DelayLineSimple(44100.0, 44100);
-
-  envelopeToggle = true;
+    delayLine1 = new DelayLineSimple(44100.0, 1);
+    delayLine1->resetDelay();
     
     isActive = false;
 }
 
 double Guitarstring::getNextSample()
 {
-  if (!isActive) return 0.0;
+    if (!isActive) return 0.0;
     
-    double yn = delayLine1->process(retuneFilter1->process(loopFilter->process(delayLine1->lastOut()*0.95) + (oscillator1->nextSample() * envelopeGenerator->nextSample())));
+    //double yn = delayLine1->process(retuneFilter1->process(loopFilter->process(delayLine1->lastOut()*0.95) + (oscillator1->nextSample() * envelopeGenerator->nextSample())));
     
+    double yn = delayLine1->process(loopFilter->process(delayLine1->lastOut()*0.989 + (oscillator1->nextSample() * envelopeGenerator->nextSample())));
+    //cout << yn << endl;
+    //if (yn<abs(0.001)) isActive = false;
     return yn;
 }
 
 void Guitarstring::setNoteNumber(int noteNumber){
     
     mNoteNumber = noteNumber;
-    cout << "NoteNUMBER" << mNoteNumber << endl;
+    
 };
 
 
@@ -62,23 +64,24 @@ void Guitarstring::pluck(int velocity)
     retuneFilter1->setC(frequency);
     
     this->velocity = velocity;
-    oscillator1->setAmplitude(velocity);
+    oscillator1->setAmplitude((double)velocity/127.0);
     oscillator1->setMuted(false);
 
-    if (envelopeToggle == true){
-        envelopeGenerator->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
-        envelopeToggle = false;
-    }
+    envelopeGenerator->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
 }
 
 void Guitarstring::releaseString()
 {
-    if (envelopeToggle == false){
-        envelopeGenerator->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE);
-        envelopeToggle = true;
-    }
+    envelopeGenerator->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE);
+    delayLine1->resetDelay();
     isActive = false;
     cout << "RELEASE" << endl;
+}
+
+void Guitarstring::reset()
+{
+    oscillator1->setMuted(true);
+    delayLine1->resetDelay();
 }
 
 void Guitarstring::setFree()

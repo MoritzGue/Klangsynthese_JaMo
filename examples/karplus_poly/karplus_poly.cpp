@@ -27,7 +27,7 @@
 #include "../../src/guitarstring.h"
 #include "../../src/stringManager.h"
 #include "../../src/Biquad.h"
-#include "../../src/midimanPoly.h"
+#include "../../src/midimanOld.h"
 
 using std::cout;
 using std::endl;
@@ -41,7 +41,7 @@ private:
     
     StringManager *gitStrings;
     Biquad *lpFilter;
-    MidiManPoly *midiMan;
+    MidiMan *midiMan;
 
     int noteStatus;
     int noteNumber;
@@ -58,13 +58,7 @@ public:
                               audioBufVector outBufs){
 
 
-        midiMan->doRtmidi();
-
-        noteStatus = midiMan->getStatus();
-        noteNumber = midiMan->getNoteNumber();
-        velocity = midiMan->getVelocity();
         
-        gitStrings->setMidiData(noteStatus, noteNumber, velocity);
 
 
 
@@ -73,9 +67,18 @@ public:
         {
           for(int frameCNT = 0; frameCNT  < nframes; frameCNT++)
           {
+              processMIDI();
+              /*midiMan->doRtmidi();
+              
+              noteStatus = midiMan->getStatus();
+              noteNumber = midiMan->getNoteNumber();
+              velocity = midiMan->getVelocity();
+              
+              gitStrings->setMidiData(noteStatus, noteNumber, velocity);*/
+              
               outBufs[0][frameCNT] = gitStrings->getNextSample();
           }
-
+ 
         }
 
         ///return 0 on success
@@ -89,7 +92,7 @@ public:
         reserveInPorts(2);
         reserveOutPorts(2);
 
-        midiMan = new MidiManPoly();
+        midiMan = new MidiMan();
 
         /// the biquad allocate
         lpFilter = new Biquad();
@@ -98,7 +101,22 @@ public:
         
         gitStrings = new StringManager();
     }
+    
+    void processMIDI() {
+        /// process midi messages
+        MidiMan::midiMessage val = midiMan->get_rtmidi();
+        
+        if(val.hasBeenProcessed)
+        {
+            gitStrings->setMidiData(val);
+            
+            midiMan->flushProcessedMessages();
+        }
+    }
 };
+
+
+
 
 ///
 ///

@@ -5,6 +5,9 @@
 #include<vector>
 #include<math.h>
 #include <cstdlib>
+#include <iostream>
+
+using namespace std;
 
 typedef enum {
     OSCILLATOR_MODE_SINE = 0,

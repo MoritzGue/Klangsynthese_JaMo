@@ -13,7 +13,6 @@ Retune::~Retune()
 
 void Retune::setC( double f1 )
 {
-    cout << "Frequenz" << f1 << endl;
     int N = floor(44100/f1); // int period
     double P1 = 44100/f1; // real period
     double Ts = 1/44100;
@@ -26,7 +25,6 @@ void Retune::setC( double f1 )
         c_temp = -1;
     }
     c = c_temp;
-    cout << "Koeff" << c << endl;
     //c = (sin(2*pi*f1*Ts)-sin(2*pi*f1*Ts*Pc))/(sin(2*pi*f1*Ts*Pc+2*pi*f1*Ts)); // filter coefficient for allpass exact
 }
 

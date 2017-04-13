@@ -11,6 +11,7 @@
 #include <cmath>
 
 #include "guitarstring.h"
+#include "midimanOld.h"
 
 using namespace std;
 
@@ -19,7 +20,7 @@ class StringManager
 public:
     StringManager();
 
-    void setMidiData(int status,int noteNumber,int velocity);
+    void setMidiData(MidiMan::midiMessage m);
     void onNoteOn(int noteNumber, int velocity);
     void onNoteOff(int noteNumber, int velocity);
     double getNextSample();
@@ -35,6 +36,7 @@ private:
     int mVelocity;
     int mNumKeys;
     bool mKeyStatus[128];
+    
 };
 
 #endif // STRINGMANAGER_H

@@ -30,7 +30,7 @@ DelayLineSimple::DelayLineSimple(double sampleRate, int bufferSizeInSeconds)
     m_nSampleRate = sampleRate;
     
     //setup the delay line
-    m_nBufferSize = 2*(int)sampleRate;
+    m_nBufferSize = bufferSizeInSeconds*(int)sampleRate;
     
     //delete Buffer if it exsits
     if(m_pBuffer)
@@ -42,8 +42,7 @@ DelayLineSimple::DelayLineSimple(double sampleRate, int bufferSizeInSeconds)
     //reset
     resetDelay();
 
-    
-    
+
     //then
     cookVariables();
 
@@ -147,7 +146,7 @@ double DelayLineSimple::process(double input)
                 if(nReadIndex_1 < 0)
                     nReadIndex_1 = m_nBufferSize - 1; // m_nBufferSize is last location
     
-                /*
+    
                 //get y(n-1)
                 double yn_1 = m_pBuffer[nReadIndex_1];
     
@@ -162,7 +161,7 @@ double DelayLineSimple::process(double input)
                     yn = xn;
                 else
                     yn = fInterp;
-    */
+    
     
                 //write the input to the delay
                 m_pBuffer[m_nWriteIndex] = xn;// + m_fFeedback*yn;

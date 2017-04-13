@@ -30,6 +30,7 @@ public:
     void setPitchInHz(int noteNumber);
     void pluck(int velocity);
     void releaseString();
+    void reset();
     void setFree();
 
 private:
@@ -40,7 +41,6 @@ private:
     EnvelopeGenerator *envelopeGenerator;
     Retune *retuneFilter1;
 
-    bool envelopeToggle;
     double velocity;
     double frequency;
     int mNoteNumber;

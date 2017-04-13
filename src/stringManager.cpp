@@ -31,34 +31,34 @@ StringManager::StringManager()
     }
 }
 
-void StringManager::setMidiData(int mStatus,int noteNumber,int velocity)
+void StringManager::setMidiData(MidiMan::midiMessage m)
 {
-    if (mStatus == 144 && velocity) {
-        if(mKeyStatus[noteNumber] == false) {
-            mKeyStatus[noteNumber] = true;
+    if (m.byte1 == 144 && m.byte3) {
+        if(mKeyStatus[m.byte2] == false) {
+            mKeyStatus[m.byte2] = true;
             mNumKeys += 1;
-            mNoteNumber = noteNumber;
-            mVelocity = velocity;
-            onNoteOn(noteNumber, velocity);
+            mNoteNumber = m.byte2;
+            mVelocity = m.byte3;
+            onNoteOn(m.byte2, m.byte3);
         }
     } else {
-        if(mKeyStatus[noteNumber] == true) {
-            mKeyStatus[noteNumber] = false;
+        if(mKeyStatus[m.byte2] == true) {
+            mKeyStatus[m.byte2] = false;
             mNumKeys -= 1;
-            mNoteNumber = noteNumber;
-            mVelocity = velocity;
-            onNoteOff(noteNumber, velocity);
+            mNoteNumber = m.byte2;
+            mVelocity = m.byte3;
+            onNoteOff(m.byte2, m.byte3);
         }
     }
 }
-
-
 
 Guitarstring* StringManager::findFreeGitString() {
     Guitarstring* freeGitString = NULL;
     for (int i = 0; i < NumberOfGitStrings; i++) {
         if (!strings[i].isActive) {
             freeGitString = &(strings[i]);
+            freeGitString->releaseString();
+            cout << i << endl;
             break;
         }
     }
@@ -67,6 +67,7 @@ Guitarstring* StringManager::findFreeGitString() {
 
 void StringManager::onNoteOn(int noteNumber, int velocity)
 {
+    
     Guitarstring* gitString = findFreeGitString();
     
     if (!gitString) {
@@ -78,8 +79,8 @@ void StringManager::onNoteOn(int noteNumber, int velocity)
     gitString->mVelocity = velocity;
     gitString->pluck(velocity);
     gitString->isActive = true;
-
 }
+
 
 void StringManager::onNoteOff(int noteNumber, int velocity)
 {
@@ -91,6 +92,13 @@ void StringManager::onNoteOff(int noteNumber, int velocity)
           gitString.releaseString();
         }
     }
+    
+    /*
+    for (int i = 0; i < NumberOfGitStrings; i++) {
+        if (string[i]->isActive && string[i]->mNoteNumber == noteNumber) {
+            string[i]->releaseString();
+        }
+    }*/
 }
 
 double StringManager::getNextSample()
@@ -99,6 +107,8 @@ double StringManager::getNextSample()
     for (int i = 0; i < NumberOfGitStrings; i++) {
         Guitarstring& gitString = strings[i];
         yn += gitString.getNextSample();
+        //yn += strings[i].getNextSample();
     }
+    //yn = string[0]->getNextSample(); //+ string[1]->getNextSample() + string[2]->getNextSample() + string[3]->getNextSample();
     return yn;
 }
