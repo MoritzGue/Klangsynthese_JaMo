@@ -20,7 +20,7 @@ envelope = new Envelope();
 envelope -> setSampleRate(44100);
 envelope -> setEnvDuration(0.001);
 
-envelope->setEnvShape(TRI);
+envelope->setEnvShape(SIN);
 
 
 };

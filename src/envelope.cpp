@@ -7,21 +7,27 @@
 
 Envelope::Envelope()
 {
+	len = floor(envDuration * sampleRate);
+	double env[len];
 }
 
 Envelope::~Envelope()
 {
 }
+//void setEnvTable{
+	//len = floor(envDuration * sampleRate);
+	//double env[len];
+//}
+
 
 void Envelope::setEnvShape(envType type){
 
 	
-	int len = envDuration * sampleRate;
-	double env[len];
-
+	
+	
 	if (type==RECT){
 
-		for (int i=0;i<len/2;i++){
+		for (int i=0;i<len;i++){
 			env[i] = 1;
 		}
 	}
@@ -29,17 +35,17 @@ void Envelope::setEnvShape(envType type){
 		
 
 		for (int i=0;i<len/2;i++){
-			env[i] = i/(len/2-1);	
+			env[i] = i/((double)len/2);	
 		}
 		for (int i=len/2;i<len;i++){
-			env[i] = 1/(i-(len/2-1));
+			env[i]= -i/ ((double)len/2) +2;
 		}
 
 	}
 	if (type==SIN){
 	
 		for (int i=0;i<len;i++){
-		env[i] = sin(pi * (i/(len-1)));
+		env[i] = sin(pi * (i/((double)len-1)));
 		}
 	}
 
@@ -48,7 +54,24 @@ std::cout << env[i]<<std::endl ;
 
 }
 
-//double Envelope::nextSample() {
+void Envelope::setEnvSwitchOn(){
+	envSwitch = 1;
+	currentSampleIndex = 0;
+}
 
-//}
+double Envelope::nextSample() {
+	double *multiplier;
+	if(envSwitch == 1){
+		multiplier = &env[currentSampleIndex];
+		currentSampleIndex++;
+		if(currentSampleIndex == len){
+			envSwitch = 0;
+		}
+
+	}
+	else {
+		*multiplier = NULL;
+	}
+return *multiplier;
+}
 
