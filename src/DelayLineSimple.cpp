@@ -106,7 +106,7 @@ void DelayLineSimple::cookVariables()
         m_nReadIndex += m_nBufferSize;  // amount of wrap is Read + Length
  
     
-
+    //Allpass calculation for frac Delay (tuning Filter)
     alpha_ = m_fDelayInSamples - floor(m_fDelayInSamples);
     
     if ( alpha_ < 0.5 ) {
@@ -120,9 +120,6 @@ void DelayLineSimple::cookVariables()
     coeff_ = ((1.0 - alpha_) / (1.0 + alpha_));  // coefficient for allpass*/
     //
 }
-
-
-
 
 
 

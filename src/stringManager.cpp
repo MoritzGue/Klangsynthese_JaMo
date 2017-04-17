@@ -51,6 +51,44 @@ void StringManager::setMidiData(MidiMan::midiMessage m)
             onNoteOff(m.byte2, m.byte3);
         }
     }
+    
+    switch (m.byte1) {
+        case 176:
+            switch (m.byte2) {
+                case 1: //Feedback Gain Value 0.5-1.0
+                {
+                    double bending = mapMidiVelocity((double)m.byte3, -15.0,15.0);
+                    cout << "BEND" << bending << endl;
+                    for(int i = 0; i < NumberOfGitStrings; i++) {
+                        strings[i]->bendString(bending);
+                    }
+                }
+                    break;
+                case 2: //Feedback Gain Value 0.5-1.0
+                {
+                    double damping = mapMidiVelocity((double)m.byte3, 0.5,0.999);
+                    cout << "DAMPGAIN" << damping << endl;
+                    for(int i = 0; i < NumberOfGitStrings; i++) {
+                        strings[i]->setDampGain(damping);
+                    }
+                }
+                    break;
+                case 5: //Oscillator Mode
+                {
+                    for(int i = 0; i < NumberOfGitStrings; i++) {
+                        strings[i]->setOscillator(m.byte3);
+                    }
+                }
+                    break;
+            
+                default:
+                    break;
+            }
+            break;
+            
+        default:
+            break;
+    }
 }
 
 /*Guitarstring* StringManager::findFreeGitString() {
@@ -112,4 +150,7 @@ void StringManager::onNoteOff(int noteNumber, int velocity)
     }
 }
 
-
+double StringManager::mapMidiVelocity (const int velocity, const double minVal, const double maxVal)
+{
+    return ((double)velocity - 0.0) * (maxVal - minVal) / (127.0 - 0.0) + minVal;
+}

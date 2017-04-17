@@ -28,7 +28,10 @@ public:
     inline double getNextSample();
     void setNoteNumber(int noteNumber);
     void setPitchInHz(int noteNumber);
+    void setDampGain(double gain){dampGain = gain;};
     void pluck(int velocity);
+    void bendString(double bendValue);
+    void setOscillator(int controlValue);
     void releaseString();
     void reset();
     void setFree();
@@ -42,6 +45,7 @@ private:
 
     double velocity;
     double frequency;
+    double dampGain;
     int mNoteNumber;
     int mVelocity;
     bool isActive;
@@ -55,7 +59,7 @@ inline double Guitarstring::getNextSample()
     if (!isActive) return 0.0;
 
     
-    double yn = delayLine1->process(loopFilter->process(delayLine1->lastOut()*0.989 + (oscillator1->nextSample() * envelopeGenerator->nextSample())));
+    double yn = delayLine1->process(loopFilter->process(delayLine1->lastOut()*dampGain + (oscillator1->nextSample() * envelopeGenerator->nextSample())));
     
     //double yn = delayLine1->process(delayLine1->lastOut()*0.989 + (oscillator1->nextSample() * envelopeGenerator->nextSample()));
     

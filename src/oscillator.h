@@ -47,7 +47,7 @@ public:
     mPI(2*acos(0.0)),
     twoPI(2*mPI),
     isMuted(true),
-    mFrequency(440.0),
+    mFrequency(198.0),
     mPhase(0.0),
     mAmplitude(1.0),
     mSampleRate(44100.0) { updateIncrement(); };

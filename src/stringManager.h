@@ -23,6 +23,7 @@ public:
     void setMidiData(MidiMan::midiMessage m);
     void onNoteOn(int noteNumber, int velocity);
     void onNoteOff(int noteNumber, int velocity);
+    double mapMidiVelocity (const int velocity, const double minVal, const double maxVal);
     inline double getNextSample();
 
 private:

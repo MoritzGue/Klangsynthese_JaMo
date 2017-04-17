@@ -29,6 +29,7 @@ public:
     
     void cookVariables();
     void resetDelay();
+    void calculateAllPass(double delayInSamples);
     inline double process(double input);
     inline double dLinTerp(double x1, double x2, double y1, double y2, double x);
     inline double allPass(double xn);
@@ -136,7 +137,7 @@ inline double DelayLineSimple::process(double input)
     
     
     //write the input to the delay
-    m_pBuffer[m_nWriteIndex] = xn;// + m_fFeedback*yn;
+    m_pBuffer[m_nWriteIndex] = xn;
     
     //create the wet/ dry mix and write output buffer
     // dry = 1 - wet
