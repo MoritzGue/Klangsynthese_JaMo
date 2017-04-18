@@ -13,10 +13,6 @@ Envelope::Envelope()
 Envelope::~Envelope()
 {
 }
-//void setEnvTable{
-	//len = floor(envDuration * sampleRate);
-	//double env[len];
-//}
 
 
 void Envelope::setEnvShape(envType type){

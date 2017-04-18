@@ -28,6 +28,7 @@ public:
 	int envSwitchOn();
 
 private:
+
 	std::vector<double>env;
 	double sampleRate;
 	int envSwitch;
