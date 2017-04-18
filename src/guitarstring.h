@@ -32,7 +32,9 @@ public:
     void setDampGain(double gain){dampGain = gain;};
     void pluck(int velocity);
     void bendString(double bendValue);
-    void setOscillator(int controlValue);
+    void setOscillator(int controlValue1);
+    void setEnvelopeShape(int controlValue2);
+    void setEnvelopeDuration(double durValue);
     void releaseString();
     void reset();
     void setFree();

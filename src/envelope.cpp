@@ -1,33 +1,46 @@
 #include "envelope.h"
-#include "math.h"
-#include <iostream>
-#include <stdlib.h>
-#include <vector>
+
 
 
 
 Envelope::Envelope()
 {
+    mEnvType = ENVELOPE_SHAPE_RECT;
+    setEnvDuration(0.01);
 }
 
 Envelope::~Envelope()
 {
 }
 
+void Envelope::setSampleRate(double newSampleRate){
+    sampleRate = newSampleRate;
+    calculateEnv();
+}
+
+void Envelope::setEnvDuration(double newEnvDuration){
+    envDuration = newEnvDuration;
+    calculateEnv();
+}
 
 void Envelope::setEnvShape(envType type){
+    mEnvType = type;
+    calculateEnv();
+}
+
+
+void Envelope::calculateEnv(){
 
 	len = floor(envDuration * sampleRate);
 	env.reserve(len);
 	
 	
-	if (type==RECT){
-
+	if (mEnvType==ENVELOPE_SHAPE_RECT){
 		for (int i=0;i<len;i++){
 			env[i] = 1;
 		}
-	}
-	if (type==TRI){
+    }
+	if (mEnvType==ENVELOPE_SHAPE_TRI){
 		
 
 		for (int i=0;i<len/2;i++){
@@ -38,7 +51,7 @@ void Envelope::setEnvShape(envType type){
 		}
 
 	}
-	if (type==SIN){
+	if (mEnvType==ENVELOPE_SHAPE_SIN){
 	
 		for (int i=0;i<len;i++){
 		env[i] = sin(pi * (i/((double)len-1)));
@@ -66,6 +79,6 @@ double Envelope::nextSample() {
 		multiplier = &null;
 	}
 return *multiplier;
-std::cout<<*multiplier<<std::endl;
+//std::cout<<*multiplier<<std::endl;
 }
 
