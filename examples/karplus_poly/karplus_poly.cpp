@@ -82,15 +82,13 @@ public:
         reserveOutPorts(2);
         
         gitStrings = new StringManager();
-        midiMan = new MidiMan();
-
+        
         /// the biquad allocate
         lpFilter = new Biquad();
         /// set initial parameters
         lpFilter->setBiquad(bq_type_lowpass, 1000.0 / 44100.0, 0.707, 0);
-        
-        
             
+        midiMan = new MidiMan();
     }
     
     void processMIDI() {

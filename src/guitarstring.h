@@ -14,7 +14,8 @@
 #include "DelayA.h"
 #include "OneZero.h"
 #include "oscillator.h"
-#include "adsr.h"
+//#include "adsr.h"
+#include "envelope.h"
 
 using namespace std;
 
@@ -41,7 +42,8 @@ private:
     DelayLineSimple *delayLine1;
     OneZero *loopFilter;
     Oscillator *oscillator1;
-    EnvelopeGenerator *envelopeGenerator;
+    //EnvelopeGenerator *envelopeGenerator;
+	Envelope *envelopeGenerator;
 
     double velocity;
     double frequency;

@@ -27,8 +27,13 @@ Guitarstring::Guitarstring()
     oscillator1 = new Oscillator(OSCILLATOR_MODE_NOISE);
     oscillator1->setSampleRate(44100.0);
 
-    envelopeGenerator = new EnvelopeGenerator();
-    envelopeGenerator->setSampleRate(44100.0);
+    //envelopeGenerator = new EnvelopeGenerator();
+    //envelopeGenerator->setSampleRate(44100.0);
+
+	envelopeGenerator = new Envelope();
+	envelopeGenerator->setSampleRate(44100.0);
+	envelopeGenerator->setEnvDuration(0.01);
+	envelopeGenerator->setEnvShape(RECT);
 
     loopFilter = new OneZero(-1.0);
 
@@ -56,7 +61,8 @@ void Guitarstring::pluck(int velocity)
     oscillator1->setAmplitude((double)velocity/127.0);
     oscillator1->setMuted(false);
 
-    envelopeGenerator->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
+    //envelopeGenerator->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
+	envelopeGenerator->setEnvSwitchOn();
 }
 
 void Guitarstring::bendString(double bendValue)
@@ -98,7 +104,7 @@ void Guitarstring::setOscillator(int controlValue)
 
 void Guitarstring::releaseString()
 {
-    envelopeGenerator->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE);
+    //envelopeGenerator->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE);
     delayLine1->resetDelay();
     isActive = false;
     //cout << "RELEASE" << endl;

@@ -20,7 +20,12 @@ envelope = new Envelope();
 envelope -> setSampleRate(44100);
 envelope -> setEnvDuration(0.001);
 
-envelope->setEnvShape(TRI);
+envelope->setEnvShape(SIN);
+envelope->setEnvSwitchOn();
 
-
+double output;
+for (int i=0;i<50;i++){
+	output = envelope->nextSample();
+	std::cout<<output<<std::endl;
+}
 };
