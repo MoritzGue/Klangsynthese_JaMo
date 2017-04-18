@@ -28,7 +28,6 @@
 #include "../../src/stringManager.h"
 #include "../../src/Biquad.h"
 #include "../../src/midimanOld.h"
-#include "../../src/FFTConvolver/FFTConvolver.h"
 
 using std::cout;
 using std::endl;
@@ -43,7 +42,7 @@ private:
     StringManager *gitStrings;
     Biquad *lpFilter;
     MidiMan *midiMan;
-
+    
     int noteStatus;
     int noteNumber;
     int velocity;
@@ -81,7 +80,8 @@ public:
 
         reserveInPorts(2);
         reserveOutPorts(2);
-
+        
+        gitStrings = new StringManager();
         midiMan = new MidiMan();
 
         /// the biquad allocate
@@ -89,7 +89,8 @@ public:
         /// set initial parameters
         lpFilter->setBiquad(bq_type_lowpass, 1000.0 / 44100.0, 0.707, 0);
         
-        gitStrings = new StringManager();
+        
+            
     }
     
     void processMIDI() {

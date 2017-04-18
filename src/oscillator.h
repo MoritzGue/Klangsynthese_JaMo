@@ -40,15 +40,62 @@ public:
     void setSampleRate(double sampleRate);
     void setAmplitude(double amplitude);
     inline void setMuted(bool muted) { isMuted = muted; }
-    double nextSample();
+    inline double nextSample();
 
     Oscillator(OscillatorMode mode) :
     mOscillatorMode(mode),
     mPI(2*acos(0.0)),
     twoPI(2*mPI),
     isMuted(true),
-    mFrequency(440.0),
+    mFrequency(198.0),
     mPhase(0.0),
     mAmplitude(1.0),
     mSampleRate(44100.0) { updateIncrement(); };
 };
+
+
+
+///PROCESS
+inline double Oscillator::nextSample() {
+    double oscVal = 0;
+    if (isMuted) return oscVal;
+    
+    switch (mOscillatorMode) {
+            
+        case OSCILLATOR_MODE_SINE:
+            oscVal = sin(mPhase);
+            oscVal *= mAmplitude;
+            
+            break;
+            
+        case OSCILLATOR_MODE_SAW:
+            oscVal = 1.0 - (2.0 * mPhase / twoPI);
+            oscVal *= mAmplitude;
+            break;
+            
+        case OSCILLATOR_MODE_SQUARE:
+            if (mPhase <= mPI) {
+                oscVal = 1.0;
+            } else {
+                oscVal = -1.0;
+            }
+            oscVal *= mAmplitude;
+            break;
+            
+        case OSCILLATOR_MODE_TRIANGLE:
+            oscVal = -1.0 + (2.0 * mPhase / twoPI);
+            oscVal = 2.0 * (fabs(oscVal) - 0.5);
+            oscVal *= mAmplitude;
+            break;
+        case OSCILLATOR_MODE_NOISE:
+            double R1 = (float) rand() / (float) RAND_MAX;
+            double R2 = (float) rand() / (float) RAND_MAX;
+            
+            oscVal = ((float) sqrt( -2.0f * log( R1 )) * cos( 2.0f * mPI * R2 )) * mAmplitude;
+    }
+    mPhase += mPhaseIncrement;
+    while (mPhase >= twoPI) {
+        mPhase -= twoPI;
+    }
+    return oscVal;
+}

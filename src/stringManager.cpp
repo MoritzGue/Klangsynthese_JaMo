@@ -22,10 +22,13 @@
 
 StringManager::StringManager()
 {
+    for (int i = 0; i < NumberOfGitStrings; i++) {
+        strings[i] = new Guitarstring();
+    }
+    
     mStatus = -1;
     mNoteNumber = -1;
     mVelocity = 0;
-    mNumKeys = 0;
     for (int i = 0; i < 127; i++) {
         mKeyStatus[i] = false;
     }
@@ -36,7 +39,6 @@ void StringManager::setMidiData(MidiMan::midiMessage m)
     if (m.byte1 == 144 && m.byte3) {
         if(mKeyStatus[m.byte2] == false) {
             mKeyStatus[m.byte2] = true;
-            mNumKeys += 1;
             mNoteNumber = m.byte2;
             mVelocity = m.byte3;
             onNoteOn(m.byte2, m.byte3);
@@ -44,71 +46,111 @@ void StringManager::setMidiData(MidiMan::midiMessage m)
     } else {
         if(mKeyStatus[m.byte2] == true) {
             mKeyStatus[m.byte2] = false;
-            mNumKeys -= 1;
             mNoteNumber = m.byte2;
             mVelocity = m.byte3;
             onNoteOff(m.byte2, m.byte3);
         }
     }
+    
+    switch (m.byte1) {
+        case 176:
+            switch (m.byte2) {
+                case 1: //Feedback Gain Value 0.5-1.0
+                {
+                    double bending = mapMidiVelocity((double)m.byte3, -15.0,15.0);
+                    cout << "BEND" << bending << endl;
+                    for(int i = 0; i < NumberOfGitStrings; i++) {
+                        strings[i]->bendString(bending);
+                    }
+                }
+                    break;
+                case 2: //Feedback Gain Value 0.5-1.0
+                {
+                    double damping = mapMidiVelocity((double)m.byte3, 0.5,0.999);
+                    cout << "DAMPGAIN" << damping << endl;
+                    for(int i = 0; i < NumberOfGitStrings; i++) {
+                        strings[i]->setDampGain(damping);
+                    }
+                }
+                    break;
+                case 5: //Oscillator Mode
+                {
+                    for(int i = 0; i < NumberOfGitStrings; i++) {
+                        strings[i]->setOscillator(m.byte3);
+                    }
+                }
+                    break;
+            
+                default:
+                    break;
+            }
+            break;
+            
+        default:
+            break;
+    }
 }
 
-Guitarstring* StringManager::findFreeGitString() {
+/*Guitarstring* StringManager::findFreeGitString() {
     Guitarstring* freeGitString = NULL;
     for (int i = 0; i < NumberOfGitStrings; i++) {
-        if (!strings[i].isActive) {
-            freeGitString = &(strings[i]);
+        if (!strings[i]->isActive) {
+            freeGitString = strings[i];//&(strings[i]);
             freeGitString->releaseString();
-            cout << i << endl;
+            //cout << i << endl;
             break;
         }
     }
     return freeGitString;
-}
+}*/
 
 void StringManager::onNoteOn(int noteNumber, int velocity)
 {
     
-    Guitarstring* gitString = findFreeGitString();
+    /*Guitarstring* gitString = findFreeGitString();
     
     if (!gitString) {
         return;
     }
     
-    //gitString->reset();
+    //gitString->releaseString();
     gitString->setNoteNumber(noteNumber);
     gitString->mVelocity = velocity;
     gitString->pluck(velocity);
-    gitString->isActive = true;
+    gitString->isActive = true;*/
+    
+    for (int i = 0; i < NumberOfGitStrings; i++) {
+        if (!strings[i]->isActive) {
+            strings[i]->setNoteNumber(noteNumber);
+            strings[i]->mVelocity = velocity;
+            strings[i]->pluck(velocity);
+            strings[i]->isActive = true;
+            break;
+        }
+    }
 }
 
 
 void StringManager::onNoteOff(int noteNumber, int velocity)
 {
-    // Find the voice(s) with the given noteNumber:
+    /*// Find the voice(s) with the given noteNumber:
     for (int i = 0; i < NumberOfGitStrings; i++) {
         Guitarstring& gitString = strings[i];
         
         if (gitString.isActive && gitString.mNoteNumber == noteNumber) {
           gitString.releaseString();
         }
-    }
-    
-    /*
-    for (int i = 0; i < NumberOfGitStrings; i++) {
-        if (string[i]->isActive && string[i]->mNoteNumber == noteNumber) {
-            string[i]->releaseString();
-        }
     }*/
+    
+    
+    for (int i = 0; i < NumberOfGitStrings; i++) {
+        if (strings[i]->isActive && strings[i]->mNoteNumber == noteNumber) {
+            strings[i]->releaseString();
+        }
+    }
 }
 
-double StringManager::getNextSample()
+double StringManager::mapMidiVelocity (const int velocity, const double minVal, const double maxVal)
 {
-    double yn = 0.0;
-    for (int i = 0; i < NumberOfGitStrings; i++) {
-        Guitarstring& gitString = strings[i];
-        yn += gitString.getNextSample();
-        //yn += strings[i].getNextSample();
-    }
-    //yn = string[0]->getNextSample(); //+ string[1]->getNextSample() + string[2]->getNextSample() + string[3]->getNextSample();
-    return yn;
+    return ((double)velocity - 0.0) * (maxVal - minVal) / (127.0 - 0.0) + minVal;
 }

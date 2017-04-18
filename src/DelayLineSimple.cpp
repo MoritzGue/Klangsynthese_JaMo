@@ -10,7 +10,7 @@
 
 #include "DelayLineSimple.h"
 
-DelayLineSimple::DelayLineSimple(double sampleRate, int bufferSizeInSeconds)
+DelayLineSimple::DelayLineSimple(double sampleRate, int bufferSizeInSamples)
 {
     m_fDelayInSamples = 200.0;
     
@@ -25,12 +25,17 @@ DelayLineSimple::DelayLineSimple(double sampleRate, int bufferSizeInSeconds)
     m_pBuffer = NULL;
     m_nBufferSize = 0;
     
+    xn_1 = 0.0;
+    yn_1 = 0.0;
+    alpha_ = 0.0;
+    coeff_ = 0.0;
+    
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
     m_nSampleRate = sampleRate;
     
     //setup the delay line
-    m_nBufferSize = bufferSizeInSeconds*(int)sampleRate;
+    m_nBufferSize = bufferSizeInSamples;
     
     //delete Buffer if it exsits
     if(m_pBuffer)
@@ -44,8 +49,8 @@ DelayLineSimple::DelayLineSimple(double sampleRate, int bufferSizeInSeconds)
 
 
     //then
-    cookVariables();
-
+    //cookVariables();
+    
 }
 
 DelayLineSimple::~DelayLineSimple()
@@ -94,92 +99,27 @@ void DelayLineSimple::cookVariables()
 {
 
     // subtract to make read index
-    m_nReadIndex = m_nWriteIndex - (int)m_fDelayInSamples;
+    m_nReadIndex = m_nWriteIndex - (int)m_fDelayInSamples +1;
     
     // check and wrap backwards
     if (m_nReadIndex < 0)
         m_nReadIndex += m_nBufferSize;  // amount of wrap is Read + Length
+ 
+    
+    //Allpass calculation for frac Delay (tuning Filter)
+    alpha_ = m_fDelayInSamples - floor(m_fDelayInSamples);
+    
+    if ( alpha_ < 0.5 ) {
+        // The optimal range for alpha is about 0.5 - 1.5 in order to
+        // achieve the flattest phase delay response.
+        m_nReadIndex += 1;
+        if ( m_nReadIndex >= m_nBufferSize ) m_nReadIndex -= m_nBufferSize;
+        alpha_ += (double) 1.0;
+    }
+    //cout << "Alpha" << alpha_ << endl;
+    coeff_ = ((1.0 - alpha_) / (1.0 + alpha_));  // coefficient for allpass*/
+    //
 }
-//==============================================================================
-//INTERPOLATE
-//==============================================================================
-inline double DelayLineSimple::dLinTerp(double x1, double x2, double y1, double y2, double x)
-{
-    double denom = x2 - x1;
-    if(denom == 0)
-        return y1; // should not ever happen
-    
-    // calculate decimal position of x
-    double dx = (x - x1)/(x2 - x1);
-    
-    // use weighted sum method of interpolating
-    double result = dx*y2 + (1-dx)*y1;
-    
-    return result;
-    
-}
-//==============================================================================
-//PROCESS
-//==============================================================================
 
-double DelayLineSimple::process(double input)
-{
 
-        
-        // ..do something to the data...
-        
-    
-                // Read the input
-                double xn = input;
-                
-                // Read the Output of the delay at m_nReadIndex
-                double yn = m_pBuffer[m_nReadIndex];
-                
-                //if delay < 1 sample, interpolate between input x(n) and x(n-1)
-                if(m_nReadIndex == m_nWriteIndex && m_fDelayInSamples < 1.00)
-                {
-                    //Interpolate x(n) with x(n-1), set yn = xn
-                    yn = xn;
-                }
-                //Read the location ONE BEHIND yn at y(n-1)
-                int nReadIndex_1 = m_nReadIndex - 1;
-                if(nReadIndex_1 < 0)
-                    nReadIndex_1 = m_nBufferSize - 1; // m_nBufferSize is last location
-    
-    
-                //get y(n-1)
-                double yn_1 = m_pBuffer[nReadIndex_1];
-    
-                //interpolate: (0, yn) and (1, yn_1) by the amount of fracDelay
-                double fFracDelay = m_fDelayInSamples - (int)m_fDelayInSamples;
-                
-                //linerp
-                double fInterp = dLinTerp(0, 1, yn, yn_1, fFracDelay); //Interpolate frac between them
-                
-                //if zero delay just pass in to out
-                if (m_fDelayInSamples == 0)
-                    yn = xn;
-                else
-                    yn = fInterp;
-    
-    
-                //write the input to the delay
-                m_pBuffer[m_nWriteIndex] = xn;// + m_fFeedback*yn;
-                
-                //create the wet/ dry mix and write output buffer
-                // dry = 1 - wet
-                output = yn;
-                
-                //increment the pointers and wrap if necessary
-    
-                m_nWriteIndex++;
-                if (m_nWriteIndex >= m_nBufferSize)
-                    m_nWriteIndex = 0;
-                
-                m_nReadIndex++;
-                if (m_nReadIndex >= m_nBufferSize)
-                    m_nReadIndex = 0;
-                
-    return output;
-    
-}
+
