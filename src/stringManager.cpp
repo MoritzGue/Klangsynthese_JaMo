@@ -66,7 +66,7 @@ void StringManager::setMidiData(MidiMan::midiMessage m)
                     break;
                 case 2: //Feedback Gain Value 0.5-1.0
                 {
-                    double damping = mapMidiVelocity((double)m.byte3, 0.5,0.999);
+                    double damping = mapMidiVelocity((double)m.byte3, 0.7,1.0);
                     cout << "DAMPGAIN" << damping << endl;
                     for(int i = 0; i < NumberOfGitStrings; i++) {
                         strings[i]->setDampGain(damping);
