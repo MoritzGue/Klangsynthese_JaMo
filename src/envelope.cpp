@@ -49,11 +49,11 @@ void Envelope::setEnvShape(envType type){
 void Envelope::setEnvSwitchOn(){
 	envSwitch = 1;
 	currentSampleIndex = 0;
+	//std::cout<<envSwitch<<std::endl;
 }
 
 double Envelope::nextSample() {
-	double *multiplier;
-	double null=0.0;
+
 	if(envSwitch == 1){
 		multiplier = &env[currentSampleIndex];
 		currentSampleIndex++;
@@ -66,5 +66,6 @@ double Envelope::nextSample() {
 		multiplier = &null;
 	}
 return *multiplier;
+std::cout<<*multiplier<<std::endl;
 }
 

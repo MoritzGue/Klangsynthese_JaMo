@@ -36,6 +36,8 @@ private:
 	double envDuration;
 	int currentSampleIndex;
 	int len;
+	double *multiplier;
+	double null=0.0;
 
 
 };
