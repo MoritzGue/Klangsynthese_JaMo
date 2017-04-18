@@ -2,13 +2,12 @@
 #include "math.h"
 #include <iostream>
 #include <stdlib.h>
+#include <vector>
 
 
 
 Envelope::Envelope()
 {
-	len = floor(envDuration * sampleRate);
-	double env[len];
 }
 
 Envelope::~Envelope()
@@ -22,7 +21,8 @@ Envelope::~Envelope()
 
 void Envelope::setEnvShape(envType type){
 
-	
+	len = floor(envDuration * sampleRate);
+	env.reserve(len);
 	
 	
 	if (type==RECT){
@@ -48,10 +48,6 @@ void Envelope::setEnvShape(envType type){
 		env[i] = sin(pi * (i/((double)len-1)));
 		}
 	}
-
-for (int i=0;i<len;i++)
-std::cout << env[i]<<std::endl ;
-
 }
 
 void Envelope::setEnvSwitchOn(){
@@ -61,6 +57,7 @@ void Envelope::setEnvSwitchOn(){
 
 double Envelope::nextSample() {
 	double *multiplier;
+	double null=0.0;
 	if(envSwitch == 1){
 		multiplier = &env[currentSampleIndex];
 		currentSampleIndex++;
@@ -70,7 +67,7 @@ double Envelope::nextSample() {
 
 	}
 	else {
-		*multiplier = NULL;
+		multiplier = &null;
 	}
 return *multiplier;
 }

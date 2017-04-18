@@ -1,6 +1,8 @@
 #ifndef ENVELOPE_H
 #define ENVELOPE_H
 
+#include <vector>
+
 typedef enum {
     RECT = 0,
     TRI,
@@ -26,6 +28,7 @@ public:
 	int envSwitchOn();
 
 private:
+	std::vector<double>env;
 	double sampleRate;
 	int envSwitch;
 	envType mEnvType;
