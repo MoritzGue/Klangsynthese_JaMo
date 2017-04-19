@@ -64,7 +64,7 @@ int SingleSample::get_L()
     return L;
 }
 
-double* SingleSample::get_x()
+float* SingleSample::get_x()
 {
     return x;
 }
@@ -93,7 +93,7 @@ void SingleSample::set_nChannels(int in)
 
 void SingleSample::initialize()
 {
-    x = new double[L*sizeof(double)];
+    x = new float[L*sizeof(float)];
 }
 
 double SingleSample::get_sample(int pos)

@@ -36,7 +36,7 @@ public:
     void read_wavefile(std::string filePath);
 
     int get_L();
-    double* get_x();
+    float* get_x();
 
     void set_f(int in);
     void set_sr(int in);
@@ -69,7 +69,7 @@ private:
     int f,sr,nChannels;
     int num, L;
 
-    double* x;
+    float* x;
 
     double pos;
     double rate;
