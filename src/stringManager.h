@@ -46,7 +46,7 @@ inline double StringManager::getNextSample()
     for (int i = 0; i < NumberOfGitStrings; i++) {
         //Guitarstring& gitString = strings[i];
         //yn += gitString.getNextSample();
-        yn += strings[i]->getNextSample()*0.5;
+        yn += strings[i]->getNextSample()*0.4;
     }
     
     yn = lpFilter->nextSample(yn);

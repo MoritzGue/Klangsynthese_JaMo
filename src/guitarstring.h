@@ -53,6 +53,8 @@ private:
     int mNoteNumber;
     int mVelocity;
     bool isActive;
+    bool fadeOut;
+    double fadeGain;
 
 };
 
@@ -60,6 +62,7 @@ private:
 //Process
 inline double Guitarstring::getNextSample()
 {
+
     if (!isActive) return 0.0;
 
     
@@ -68,6 +71,19 @@ inline double Guitarstring::getNextSample()
     //double yn = delayLine1->process(delayLine1->lastOut()*0.989 + (oscillator1->nextSample() * envelopeGenerator->nextSample()));
     
     //cout << yn << endl;
+    
+    if (fadeOut == true){
+        yn = yn * fadeGain;
+        fadeGain = fadeGain - 0.001;
+        if(fadeGain <= 0.0){
+            isActive = false;
+            fadeOut = false;
+           
+        }
+    }
+    
+    
+    
     return yn;
 }
 #endif // GUITARSTRING_H
