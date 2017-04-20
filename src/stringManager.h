@@ -11,6 +11,7 @@
 #include <cmath>
 
 #include "guitarstring.h"
+#include "TPTFilter.h"
 #include "midimanOld.h"
 
 using namespace std;
@@ -30,6 +31,7 @@ private:
 
     static const int NumberOfGitStrings = 12;
     Guitarstring *strings[NumberOfGitStrings];
+    TPTFilter *lpFilter;
     //Guitarstring* findFreeGitString();
     
     int mStatus;
@@ -44,11 +46,11 @@ inline double StringManager::getNextSample()
     for (int i = 0; i < NumberOfGitStrings; i++) {
         //Guitarstring& gitString = strings[i];
         //yn += gitString.getNextSample();
-        yn += strings[i]->getNextSample();
+        yn += strings[i]->getNextSample()*0.5;
     }
     
-    //yn = strings[0]->getNextSample() + strings[1]->getNextSample() + strings[2]->getNextSample() + strings[3]->getNextSample() + strings[4]->getNextSample() + strings[5]->getNextSample() + strings[6]->getNextSample();
-
+    yn = lpFilter->nextSample(yn);
+    
     return yn;
 }
 #endif // STRINGMANAGER_H

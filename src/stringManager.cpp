@@ -25,6 +25,10 @@ StringManager::StringManager()
     for (int i = 0; i < NumberOfGitStrings; i++) {
         strings[i] = new Guitarstring();
     }
+    /// the TPTFilter allocate
+    lpFilter = new TPTFilter();
+    /// set initial parameters
+    lpFilter->setTPTFilter(bq_type_lowpass, 1000.0 , 0.707, 44100.0);
     
     mStatus = -1;
     mNoteNumber = -1;
@@ -66,10 +70,26 @@ void StringManager::setMidiData(MidiMan::midiMessage m)
                     break;
                 case 2: //Feedback Gain Value 0.5-1.0
                 {
-                    double damping = mapMidiVelocity((double)m.byte3, 0.5,0.999);
+                    double damping = mapMidiVelocity((double)m.byte3, 0.7,1.0);
                     cout << "DAMPGAIN" << damping << endl;
                     for(int i = 0; i < NumberOfGitStrings; i++) {
                         strings[i]->setDampGain(damping);
+                    }
+                }
+                    break;
+                case 3:
+                {
+                    for(int i = 0; i < NumberOfGitStrings; i++) {
+                        strings[i]->setEnvelopeShape(m.byte3);
+                    }
+                }
+                    break;
+                case 4:
+                {
+                    double duration = mapMidiVelocity((double)m.byte3, 0.001,0.5);
+                    cout << "ENV DURATION" << duration << endl;
+                    for(int i = 0; i < NumberOfGitStrings; i++) {
+                        strings[i]->setEnvelopeDuration(duration);
                     }
                 }
                     break;
@@ -80,12 +100,31 @@ void StringManager::setMidiData(MidiMan::midiMessage m)
                     }
                 }
                     break;
+                case 7: //Filter Cut-Off
+                {
+                    double Fc = mapMidiVelocity((double)m.byte3, 50.0,5000.0);
+                    cout << "CUT-OFF" << Fc << endl;
+                    for(int i = 0; i < NumberOfGitStrings; i++) {
+                        lpFilter->setFc(Fc);
+                        if (m.byte3 == 127) lpFilter->setFc(20000.0);
+                    }
+                }
+                    break;
+                case 8: //Filter Q
+                {
+                    double Q = mapMidiVelocity((double)m.byte3, 0.707,3.0);
+                    cout << "RESONANCE" << Q << endl;
+                    for(int i = 0; i < NumberOfGitStrings; i++) {
+                        lpFilter->setQ(Q);
+                    }
+                }
+                    break;
             
                 default:
                     break;
             }
             break;
-            
+
         default:
             break;
     }

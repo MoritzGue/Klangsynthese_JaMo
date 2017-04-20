@@ -32,8 +32,6 @@ Guitarstring::Guitarstring()
 
 	envelopeGenerator = new Envelope();
 	envelopeGenerator->setSampleRate(44100.0);
-	envelopeGenerator->setEnvDuration(0.01);
-	envelopeGenerator->setEnvShape(RECT);
 
     loopFilter = new OneZero(-1.0);
 
@@ -73,9 +71,9 @@ void Guitarstring::bendString(double bendValue)
     delayLine1->setDelayInSamples(44100.0/f - 1.0);
 }
 
-void Guitarstring::setOscillator(int controlValue)
+void Guitarstring::setOscillator(int controlValue1)
 {
-    switch (controlValue) {
+    switch (controlValue1) {
         case 0:
             oscillator1->setMode(OSCILLATOR_MODE_SINE);
             cout << "SINE" << endl;
@@ -100,6 +98,32 @@ void Guitarstring::setOscillator(int controlValue)
             break;
     }
     
+}
+
+void Guitarstring::setEnvelopeShape(int controlValue2)
+{
+    switch (controlValue2) {
+        case 0:
+            envelopeGenerator->setEnvShape(ENVELOPE_SHAPE_RECT);
+            cout << "RECT SHAPE" << endl;
+            break;
+        case 64:
+            envelopeGenerator->setEnvShape(ENVELOPE_SHAPE_TRI);
+            cout << "TRIANGLE SHAPE" << endl;
+            break;
+        case 127:
+            envelopeGenerator->setEnvShape(ENVELOPE_SHAPE_SIN);
+            cout << "ROUND SHAPE" << endl;
+            break;
+        default:
+            break;
+    }
+    
+}
+
+void Guitarstring::setEnvelopeDuration(double durValue)
+{
+    envelopeGenerator->setEnvDuration(durValue);
 }
 
 void Guitarstring::releaseString()
