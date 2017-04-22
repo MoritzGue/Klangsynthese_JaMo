@@ -23,6 +23,7 @@
 Guitarstring::Guitarstring()
 {
     isActive = false;
+    fadeOut = false;
     
     oscillator1 = new Oscillator(OSCILLATOR_MODE_NOISE);
     oscillator1->setSampleRate(44100.0);
@@ -39,6 +40,8 @@ Guitarstring::Guitarstring()
     delayLine1->resetDelay();
     
     dampGain = 0.99;
+    
+    fadeGain = 0.9;
 }
 
 
@@ -52,14 +55,15 @@ void Guitarstring::setNoteNumber(int noteNumber){
 void Guitarstring::pluck(int velocity)
 {
     frequency = 440.00 * pow (2.0, (mNoteNumber - 69) / 12.0);
-
+    delayLine1->resetDelay();
     delayLine1->setDelayInSamples(44100.0/frequency - 1.0);
     cout << "FREQ" << frequency << endl;
     this->velocity = velocity;
     oscillator1->setAmplitude((double)velocity/127.0);
     oscillator1->setMuted(false);
+    fadeGain = 0.9;
+    fadeOut = false;
 
-    //envelopeGenerator->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
 	envelopeGenerator->setEnvSwitchOn();
 }
 
@@ -129,9 +133,12 @@ void Guitarstring::setEnvelopeDuration(double durValue)
 void Guitarstring::releaseString()
 {
     //envelopeGenerator->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE);
-    delayLine1->resetDelay();
-    isActive = false;
-    //cout << "RELEASE" << endl;
+    
+    fadeOut = true;
+    
+    //delayLine1->resetDelay();
+    
+    cout << "RELEASE" << fadeOut << endl;
 }
 
 void Guitarstring::reset()
