@@ -1,6 +1,24 @@
+/**
+ * \class Envelope
+ *
+ *
+ * \Creates a vector for shaping the form of an excitation burst
+ *  
+ *
+ *
+ *
+ * \author Moritz Güldenring & Janek Newjoto
+ *
+ * \version
+ *
+ * \date
+ *
+ * Contact:
+ *
+ *
+ */
+
 #include "envelope.h"
-
-
 
 
 Envelope::Envelope()
@@ -39,7 +57,7 @@ void Envelope::calculateEnv(){
 		for (int i=0;i<len;i++){
 			env[i] = 1;
 		}
-    }
+    	}
 	if (mEnvType==ENVELOPE_SHAPE_TRI){
 		
 
@@ -57,12 +75,16 @@ void Envelope::calculateEnv(){
 		env[i] = sin(pi * (i/((double)len-1)));
 		}
 	}
+	if (mEnvType==ENVELOPE_SHAPE_HAN){
+		for (int i=0;i<len;i++) {
+    		env[i] = 0.5 * (1 - cos(2*pi*i/(len-1)));
+		}
+	}
 }
 
 void Envelope::setEnvSwitchOn(){
 	envSwitch = 1;
 	currentSampleIndex = 0;
-	//std::cout<<envSwitch<<std::endl;
 }
 
 double Envelope::nextSample() {
