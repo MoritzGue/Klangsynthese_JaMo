@@ -90,13 +90,17 @@ void Guitarstring::setEnvelopeShape(int controlValue2){
             envelopeGenerator->setEnvShape(ENVELOPE_SHAPE_RECT);
             cout << "RECT SHAPE" << endl;
             break;
-        case 64:
+        case 42:
             envelopeGenerator->setEnvShape(ENVELOPE_SHAPE_TRI);
             cout << "TRIANGLE SHAPE" << endl;
             break;
-        case 127:
+        case 84:
             envelopeGenerator->setEnvShape(ENVELOPE_SHAPE_SIN);
             cout << "ROUND SHAPE" << endl;
+            break;
+        case 127:
+            envelopeGenerator->setEnvShape(ENVELOPE_SHAPE_HAN);
+            cout << "HANNING SHAPE" << endl;
             break;
         default:
             break;

@@ -64,7 +64,7 @@ void StringManager::setMidiData(MidiMan::midiMessage m){
                     }
                 }
                     break;
-                case 3: // Sets the envelope shape (rect, tri, round)
+                case 3: // Sets the envelope shape (rect, tri, half-sine, hanning)
                 {
                     for(int i = 0; i < NumberOfGitStrings; i++) {
                         strings[i]->setEnvelopeShape(m.byte3);
