@@ -1,23 +1,3 @@
-/**
- * \class Envelope
- *
- *
- * \Creates a vector for shaping the form of an excitation burst
- *  
- *
- *
- *
- * \author Moritz Güldenring & Janek Newjoto
- *
- * \version
- *
- * \date
- *
- * Contact:
- *
- *
- */
-
 #include "envelope.h"
 
 
@@ -46,18 +26,20 @@ void Envelope::setEnvShape(envType type){
     calculateEnv();
 }
 
-
+// calculation of the window as a sample vector for different shapes
 void Envelope::calculateEnv(){
-
+	
+	//vector length ins samples
 	len = floor(envDuration * sampleRate);
 	env.reserve(len);
 	
-	
+	//rectangular window
 	if (mEnvType==ENVELOPE_SHAPE_RECT){
 		for (int i=0;i<len;i++){
 			env[i] = 1;
 		}
     	}
+	//triangular window
 	if (mEnvType==ENVELOPE_SHAPE_TRI){
 		
 
@@ -69,24 +51,26 @@ void Envelope::calculateEnv(){
 		}
 
 	}
+	//half sinus window
 	if (mEnvType==ENVELOPE_SHAPE_SIN){
 	
 		for (int i=0;i<len;i++){
 		env[i] = sin(pi * (i/((double)len-1)));
 		}
 	}
+	//hanning shape
 	if (mEnvType==ENVELOPE_SHAPE_HAN){
 		for (int i=0;i<len;i++) {
     		env[i] = 0.5 * (1 - cos(2*pi*i/(len-1)));
 		}
 	}
 }
-
+//start the excitation
 void Envelope::setEnvSwitchOn(){
 	envSwitch = 1;
 	currentSampleIndex = 0;
 }
-
+//return pointer to the next sample of the excitation window if switch is on, otherwise return 0
 double Envelope::nextSample() {
 
 	if(envSwitch == 1){
@@ -101,6 +85,5 @@ double Envelope::nextSample() {
 		multiplier = &null;
 	}
 return *multiplier;
-//std::cout<<*multiplier<<std::endl;
 }
 

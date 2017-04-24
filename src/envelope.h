@@ -1,3 +1,20 @@
+/**
+ * @class Envelope
+ *
+ *
+ * @brief Creates a vector for shaping the form of an excitation burst
+ *  
+ *
+ *
+ *
+ * \author Moritz Güldenring & Janek Newjoto
+ *
+ *
+ * Contact:
+ *
+ *
+ */
+
 #ifndef ENVELOPE_H
 #define ENVELOPE_H
 
@@ -26,12 +43,31 @@ public:
 
 	double pi = 3.14159265359;
 	void setSampleRate(double newSampleRate);
+	/**
+        * @brief sets the duration of the excitation window
+        * @param time in seconds
+        */
 	void setEnvDuration(double newEnvDuration);
+
+	/**
+        * @brief sets the window shape of the excitation window (rectangular, triangular, sinus, hanning)
+        * @param type
+        */
 	void setEnvShape(envType type);
-    void calculateEnv();
+
+	/**
+        * @brief uses envelope duration and window shape to calculate the excitation window as a vector of samples
+        */
+    	void calculateEnv();
+
 	void setEnvSwitchOn();
-	void setEnvTable();
+
+	/**
+        * @brief returns a pointer to the next sample of the excitation window
+        * as long as duration time is not exceeded
+        */
 	double nextSample();
+
 	int envSwitchOn();
 
 private:
