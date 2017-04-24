@@ -1,33 +1,15 @@
-/**
- * \class StrinManager
- *
- *
- * \brief Implements a full
- *  Manages multiple Guitarstrings controlled by MIDI inputs. Up to 6 Guitarstrings are possible.
- *
- *
- *
- * \author Moritz Güldenring & Janek Newjoto
- *
- * \version
- *
- * \date
- *
- * Contact:
- *
- *
- */
-
 #include "stringManager.h"
 
-StringManager::StringManager()
-{
+StringManager::StringManager(){
+    
+    // the waveguide guitarstrings allocate
     for (int i = 0; i < NumberOfGitStrings; i++) {
         strings[i] = new Guitarstring();
     }
-    /// the TPTFilter allocate
+    
+    // the TPTFilter allocate
     lpFilter = new TPTFilter();
-    /// set initial parameters
+    // set initial parameters
     lpFilter->setTPTFilter(bq_type_lowpass, 1000.0 , 0.707, 44100.0);
     
     mStatus = -1;
@@ -38,8 +20,12 @@ StringManager::StringManager()
     }
 }
 
-void StringManager::setMidiData(MidiMan::midiMessage m)
-{
+StringManager::~StringManager(){
+}
+
+void StringManager::setMidiData(MidiMan::midiMessage m){
+    
+    // Note number management
     if (m.byte1 == 144 && m.byte3) {
         if(mKeyStatus[m.byte2] == false) {
             mKeyStatus[m.byte2] = true;
@@ -56,10 +42,11 @@ void StringManager::setMidiData(MidiMan::midiMessage m)
         }
     }
     
+    // CC management
     switch (m.byte1) {
         case 176:
             switch (m.byte2) {
-                case 1: //Feedback Gain Value 0.5-1.0
+                case 1: //String bending
                 {
                     double bending = mapMidiVelocity((double)m.byte3, -15.0,15.0);
                     cout << "BEND" << bending << endl;
@@ -68,7 +55,7 @@ void StringManager::setMidiData(MidiMan::midiMessage m)
                     }
                 }
                     break;
-                case 2: //Feedback Gain Value 0.5-1.0
+                case 2: //feedback Gain Value
                 {
                     double damping = mapMidiVelocity((double)m.byte3, 0.7,1.0);
                     cout << "DAMPGAIN" << damping << endl;
@@ -77,14 +64,14 @@ void StringManager::setMidiData(MidiMan::midiMessage m)
                     }
                 }
                     break;
-                case 3:
+                case 3: // Sets the envelope shape (rect, tri, round)
                 {
                     for(int i = 0; i < NumberOfGitStrings; i++) {
                         strings[i]->setEnvelopeShape(m.byte3);
                     }
                 }
                     break;
-                case 4:
+                case 4: // Sets the envelope duration
                 {
                     double duration = mapMidiVelocity((double)m.byte3, 0.001,0.5);
                     cout << "ENV DURATION" << duration << endl;
@@ -93,14 +80,14 @@ void StringManager::setMidiData(MidiMan::midiMessage m)
                     }
                 }
                     break;
-                case 5: //Oscillator Mode
+                case 5: // Sets oscillator mode (Sin, Saw, Square, Tri, Noise)
                 {
                     for(int i = 0; i < NumberOfGitStrings; i++) {
                         strings[i]->setOscillator(m.byte3);
                     }
                 }
                     break;
-                case 7: //Filter Cut-Off
+                case 7: //Sets TPT filter cut-off
                 {
                     double Fc = mapMidiVelocity((double)m.byte3, 50.0,5000.0);
                     cout << "CUT-OFF" << Fc << endl;
@@ -110,7 +97,7 @@ void StringManager::setMidiData(MidiMan::midiMessage m)
                     }
                 }
                     break;
-                case 8: //Filter Q
+                case 8: //Sets TPT filter Q
                 {
                     double Q = mapMidiVelocity((double)m.byte3, 0.707,3.0);
                     cout << "RESONANCE" << Q << endl;
@@ -130,34 +117,10 @@ void StringManager::setMidiData(MidiMan::midiMessage m)
     }
 }
 
-/*Guitarstring* StringManager::findFreeGitString() {
-    Guitarstring* freeGitString = NULL;
-    for (int i = 0; i < NumberOfGitStrings; i++) {
-        if (!strings[i]->isActive) {
-            freeGitString = strings[i];//&(strings[i]);
-            freeGitString->releaseString();
-            //cout << i << endl;
-            break;
-        }
-    }
-    return freeGitString;
-}*/
 
-void StringManager::onNoteOn(int noteNumber, int velocity)
-{
+void StringManager::onNoteOn(int noteNumber, int velocity){
     
-    /*Guitarstring* gitString = findFreeGitString();
-    
-    if (!gitString) {
-        return;
-    }
-    
-    //gitString->releaseString();
-    gitString->setNoteNumber(noteNumber);
-    gitString->mVelocity = velocity;
-    gitString->pluck(velocity);
-    gitString->isActive = true;*/
-    
+    // Find a free guitarstring
     for (int i = 0; i < NumberOfGitStrings; i++) {
         if (!strings[i]->isActive) {
             strings[i]->setNoteNumber(noteNumber);
@@ -170,18 +133,9 @@ void StringManager::onNoteOn(int noteNumber, int velocity)
 }
 
 
-void StringManager::onNoteOff(int noteNumber, int velocity)
-{
-    /*// Find the voice(s) with the given noteNumber:
-    for (int i = 0; i < NumberOfGitStrings; i++) {
-        Guitarstring& gitString = strings[i];
-        
-        if (gitString.isActive && gitString.mNoteNumber == noteNumber) {
-          gitString.releaseString();
-        }
-    }*/
+void StringManager::onNoteOff(int noteNumber, int velocity){
     
-    
+    // Find the guitarstring(s) with the given noteNumber:
     for (int i = 0; i < NumberOfGitStrings; i++) {
         if (strings[i]->isActive && strings[i]->mNoteNumber == noteNumber) {
             strings[i]->releaseString();
@@ -189,7 +143,7 @@ void StringManager::onNoteOff(int noteNumber, int velocity)
     }
 }
 
-double StringManager::mapMidiVelocity (const int velocity, const double minVal, const double maxVal)
-{
+double StringManager::mapMidiVelocity (const int velocity, const double minVal, const double maxVal){
+    
     return ((double)velocity - 0.0) * (maxVal - minVal) / (127.0 - 0.0) + minVal;
 }

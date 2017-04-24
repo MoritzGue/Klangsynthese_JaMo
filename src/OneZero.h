@@ -1,9 +1,6 @@
 #ifndef STK_ONEZERO_H
 #define STK_ONEZERO_H
 
-
-
-
 /***************************************************/
 /*! \class OneZero
   \brief STK one-zero filter class.
@@ -21,16 +18,16 @@ class OneZero
  public:
 
   //! The default constructor creates a low-pass filter (zero at z = -1.0).
-  OneZero( double theZero = -1.0 );
+  OneZero(double theZero = -1.0);
 
   //! Class destructor.
   ~OneZero();
 
   //! Set the b[0] coefficient value.
-  void setB0( double b0 ) { b_0 = b0; };
+  void setB0(double b0) { b_0 = b0; };
 
   //! Set the b[1] coefficient value.
-  void setB1( double b1 ) { b_1 = b1; };
+  void setB1(double b1) { b_1 = b1; };
 
   //! Set all filter coefficients.
   void setCoefficients( double b0, double b1);
@@ -56,18 +53,14 @@ private:
     double b_0;
     double b_1;
     double z_1;
-
 };
 
-inline float OneZero :: process(float input)
-{
+// Audio processing
+inline float OneZero :: process(float input){
     float y_n = b_1 * z_1 + b_0 * input;
     z_1 = input;
     return y_n;
 }
-
-
-
 
 #endif
 

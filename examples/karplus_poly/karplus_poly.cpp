@@ -1,7 +1,7 @@
 /**
  * \file
  *
- * \brief This is a polyphonic Karplus-Strong algorithm
+ * \brief This is the main file and implements a polyphonic Karplus-Strong Waveguide algorithm
  *
  *
  *
@@ -27,7 +27,6 @@
 
 #include "../../src/guitarstring.h"
 #include "../../src/stringManager.h"
-//#include "../../src/Biquad.h"
 #include "../../src/midimanOld.h"
 #include "../../src/singlesample.h"
 #include "../../src/FFTConvolver/FFTConvolver.h"
@@ -48,10 +47,10 @@ class KarplusPoly: public JackCpp::AudioIO {
 
 private:
     
-    StringManager *gitStrings;
-    MidiMan *midiMan;
+    StringManager *gitStrings;          // Manages MIDI-Messages and dristibutes them to multiple Waveguides
+    MidiMan *midiMan;                   // MIDI handling
     SingleSample *singleSample;
-    fftconvolver::FFTConvolver fftconv;
+    fftconvolver::FFTConvolver fftconv; // FFT-Convolution
     
     int noteStatus;
     int noteNumber;
@@ -76,11 +75,11 @@ public:
           for(int frameCNT = 0; frameCNT  < nframes; frameCNT++)
           {
               processMIDI();
-              
+              // Synthesize Samples
               outBufs[0][frameCNT] = gitStrings->getNextSample()*0.2;
           }
+            // Convolution with guitar body IR
             fftconv.process(&outBufs[0][0], &outBufs[0][0], nframes);
-            
         }
 
         ///return 0 on success
@@ -102,10 +101,10 @@ public:
         ir_temp = singleSample->get_x();
         */
         
-            
+        // initialize FFT-Convolution with IR
         fftconv.init(1024, impuls.data(), impuls.size());
         //fftconv.init(1024, &ir_temp, sizeof(&ir_temp));
-            
+        
         midiMan = new MidiMan();
     }
     

@@ -1,22 +1,3 @@
-/**
- * \class Oscillator
- *
- *
- * \Oscillator Class with 4 generator Signals: Sine, Square, Triangle, Sawtooth
- *
- *
- *
- * \author Moritz Güldenring insprired by http://www.martin-finke.de/blog/articles/audio-plugins-008-synthesizing-waveforms/
- *
- * \version $Revision: 0.5 $
- *
- * \date $Date: 2016/08/01 14:16:20 $
- *
- *
- *
- *
- */
-
 #include "oscillator.h"
 
 void Oscillator::setMode(OscillatorMode mode) {

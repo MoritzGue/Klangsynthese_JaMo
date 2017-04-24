@@ -1,21 +1,9 @@
-/*
-  ==============================================================================
-
-    DelayLineSimple.cpp
-    Created: 18 Nov 2015 5:12:22pm
-    Author:  Moritz Güldenring
-
-  ==============================================================================
-*/
-
 #include "DelayLineSimple.h"
 
-DelayLineSimple::DelayLineSimple(double sampleRate, int bufferSizeInSamples)
-{
-    m_fDelayInSamples = 200.0;
+DelayLineSimple::DelayLineSimple(double sampleRate, int bufferSizeInSamples){
     
+    m_fDelayInSamples = 200.0;
     m_fDelay_ms = 0;
-
     
     //reset
     m_nReadIndex = 0;
@@ -50,19 +38,13 @@ DelayLineSimple::DelayLineSimple(double sampleRate, int bufferSizeInSamples)
 
     //then
     //cookVariables();
-    
 }
 
-DelayLineSimple::~DelayLineSimple()
-{
+DelayLineSimple::~DelayLineSimple(){
     delete [] m_pBuffer;
 }
-//==============================================================================
-//RESET DELAY
-//==============================================================================
 
-void DelayLineSimple::resetDelay()
-{
+void DelayLineSimple::resetDelay(){
     //flush Buffer
     if(m_pBuffer)
         memset(m_pBuffer, 0, m_nBufferSize*sizeof(double));
@@ -72,31 +54,19 @@ void DelayLineSimple::resetDelay()
     m_nReadIndex = 0; //reset read index to top
     
 }
-//==============================================================================
-//SET VARIABLES
-//==============================================================================
 
-void DelayLineSimple::setDelayInSamples(double delayInSamples)
-{
+void DelayLineSimple::setDelayInSamples(double delayInSamples){
     m_fDelayInSamples = delayInSamples;
     cookVariables();
 }
 
-
-void DelayLineSimple::setDelayInMs(double delayInMs)
-{
+void DelayLineSimple::setDelayInMs(double delayInMs){
     m_fDelay_ms = delayInMs;
     m_fDelayInSamples = m_fDelay_ms*(m_nSampleRate/1000.0);  // 2 seconds delay @ fs
     cookVariables();
 }
 
-
-//==============================================================================
-//COOK
-//==============================================================================
-
-void DelayLineSimple::cookVariables()
-{
+void DelayLineSimple::cookVariables(){
 
     // subtract to make read index
     m_nReadIndex = m_nWriteIndex - (int)m_fDelayInSamples +1;
@@ -106,7 +76,8 @@ void DelayLineSimple::cookVariables()
         m_nReadIndex += m_nBufferSize;  // amount of wrap is Read + Length
  
     
-    //Allpass calculation for frac Delay (tuning Filter)
+    // Allpass calculation for frac delay (tuning filter)
+    // see also: https://ccrma.stanford.edu/~jos/Interpolation/
     alpha_ = m_fDelayInSamples - floor(m_fDelayInSamples);
     
     if ( alpha_ < 0.5 ) {
@@ -116,9 +87,7 @@ void DelayLineSimple::cookVariables()
         if ( m_nReadIndex >= m_nBufferSize ) m_nReadIndex -= m_nBufferSize;
         alpha_ += (double) 1.0;
     }
-    //cout << "Alpha" << alpha_ << endl;
-    coeff_ = ((1.0 - alpha_) / (1.0 + alpha_));  // coefficient for allpass*/
-    //
+    coeff_ = ((1.0 - alpha_) / (1.0 + alpha_));  // coefficient for allpass
 }
 
 

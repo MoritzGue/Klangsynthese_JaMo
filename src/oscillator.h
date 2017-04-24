@@ -1,4 +1,16 @@
-
+/**
+ * @class Oscillator
+ *
+ *
+ * @Oscillator Class generating 5 signals: Sine, Square, Triangle, Sawtooth, Noise
+ *
+ *
+ *
+ * @author Moritz Güldenring & Janek Newojoto. Insprired by http://www.martin-finke.de/blog/articles/audio-plugins-008-synthesizing-waveforms/
+ *
+ *
+ *
+ */
 
 #define _USE_MATH_DEFINES
 
@@ -20,6 +32,32 @@ typedef enum {
 
 class Oscillator {
 
+public:
+    /**
+     * @brief General setter functions
+     */
+    void setMode(OscillatorMode mode);
+    void setFrequency(double frequency);
+    void setSampleRate(double sampleRate);
+    void setAmplitude(double amplitude);
+    
+    inline void setMuted(bool muted) { isMuted = muted; }
+    /**
+     * @brief The audio processing
+     * returns sample
+     */
+    inline double nextSample();
+    
+    Oscillator(OscillatorMode mode) :
+    mOscillatorMode(mode),
+    mPI(2*acos(0.0)),
+    twoPI(2*mPI),
+    isMuted(true),
+    mFrequency(198.0),
+    mPhase(0.0),
+    mAmplitude(1.0),
+    mSampleRate(44100.0) { updateIncrement(); };
+
 private:
 
     OscillatorMode mOscillatorMode;
@@ -32,31 +70,13 @@ private:
     double mSampleRate;
     double mPhaseIncrement;
     void updateIncrement();
-
-public:
-
-    void setMode(OscillatorMode mode);
-    void setFrequency(double frequency);
-    void setSampleRate(double sampleRate);
-    void setAmplitude(double amplitude);
-    inline void setMuted(bool muted) { isMuted = muted; }
-    inline double nextSample();
-
-    Oscillator(OscillatorMode mode) :
-    mOscillatorMode(mode),
-    mPI(2*acos(0.0)),
-    twoPI(2*mPI),
-    isMuted(true),
-    mFrequency(198.0),
-    mPhase(0.0),
-    mAmplitude(1.0),
-    mSampleRate(44100.0) { updateIncrement(); };
 };
 
 
 
-///PROCESS
+//  Audio processing
 inline double Oscillator::nextSample() {
+    
     double oscVal = 0;
     if (isMuted) return oscVal;
     
@@ -87,12 +107,14 @@ inline double Oscillator::nextSample() {
             oscVal = 2.0 * (fabs(oscVal) - 0.5);
             oscVal *= mAmplitude;
             break;
+        
         case OSCILLATOR_MODE_NOISE:
             double R1 = (float) rand() / (float) RAND_MAX;
             double R2 = (float) rand() / (float) RAND_MAX;
             
             oscVal = ((float) sqrt( -2.0f * log( R1 )) * cos( 2.0f * mPI * R2 )) * mAmplitude;
     }
+    
     mPhase += mPhaseIncrement;
     while (mPhase >= twoPI) {
         mPhase -= twoPI;

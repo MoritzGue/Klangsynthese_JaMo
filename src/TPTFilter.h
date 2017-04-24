@@ -1,6 +1,17 @@
-//
-//  TPTFilter.h
-//
+/**
+ * @class TPTFilter
+ *
+ *
+ * @brief
+ *
+ *
+ *
+ * @author Moritz Güldenring & Janek Newjoto
+ *
+ * @Contact: moritz.gueldenring@capmus.tu-berlin.de
+ *
+ *
+ */
 
 #ifndef TPTFilter_h
 #define TPTFilter_h
@@ -16,17 +27,30 @@ enum {
 };
 
 class TPTFilter {
+
 public:
+    
     TPTFilter();
     TPTFilter(int type, double Fc, double Q, double sampleRate);
     ~TPTFilter();
+    
     void setType(int type);
     void setQ(double Q);
     void setFc(double Fc);
     void setTPTFilter(int type, double Fc, double Q, double peakGain);
+    
+    
+    /**
+     * @brief The audio processing
+     * returns sample
+     */
     double nextSample(double input);
     
 protected:
+    
+    /**
+     * @brief Calculates the filter coefficiants g & h (lowpass only for now)
+     */
     void calcTPTFilter(void);
 
     int type;
@@ -35,7 +59,8 @@ protected:
     double z1, z2;
 };
 
-inline double TPTFilter::nextSample(double input) {
+// Audio processing
+inline double TPTFilter::nextSample(double input){
     
     const double yH = h * (input - (1.0 / Q + g) * z1 - z2);
     
@@ -44,8 +69,7 @@ inline double TPTFilter::nextSample(double input) {
     
     const double yL = g * yB + z2;
     z2 = g * yB + yL;
-    
-    
+        
     return yL;
 }
 

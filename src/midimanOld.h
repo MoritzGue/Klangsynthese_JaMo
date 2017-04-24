@@ -15,6 +15,7 @@
  *
  *
  */
+
 #ifndef MIDIMAN_H
 #define MIDIMAN_H
 #include <iostream>

@@ -1,12 +1,19 @@
-/*
-  ==============================================================================
+/**
+ * @class DelayLineSimple
+ *
+ *
+ * @brief Implements a delay ring buffer including fractional allpass delay
+ *
+ *
+ *
+ * @author Moritz Güldenring & Janek Newjoto
+ *
+ *
+ * @Contact: moritz.gueldenring@capmus.tu-berlin.de
+ *
+ *
+ */
 
-    DelayLineSimple.h
-    Created: 18 Nov 2015 5:12:22pm
-    Author:  Moritz Güldenring
-
-  ==============================================================================
-*/
 #include <iostream>
 #include <cmath>
 #include <stdio.h>
@@ -14,6 +21,7 @@
 
 #ifndef DELAYLINESIMPLE_H_INCLUDED
 #define DELAYLINESIMPLE_H_INCLUDED
+
 using namespace std;
 
 class DelayLineSimple {
@@ -23,22 +31,29 @@ public:
     DelayLineSimple(double sampleRate, int bufferSizeInSeconds);
     ~DelayLineSimple();
     
-    //==============================================================================
+    /**
+     * @brief flushes the delay buffer and sets read/write pointers to 0
+     */
+    void resetDelay();
+    void setDelayInSamples(double delayInSamples);
+    void setDelayInMs(double delayInMs);
+    /**
+     * @brief Sets read/ write poiters and calculates the allpass frac delay
+     */
+    void cookVariables();
     
+    /**
+     * @returns Last sample from read pointer
+     */
     double lastOut( void ) const { return output; };
     
-    void cookVariables();
-    void resetDelay();
-    void calculateAllPass(double delayInSamples);
-    inline double process(double input);
+    /**
+     * @brief The audio processing
+     * returns sample
+     */
     inline double dLinTerp(double x1, double x2, double y1, double y2, double x);
     inline double allPass(double xn);
-
-    //==============================================================================
-    void setDelayInSamples(double delayInSamples);
-
-    void setDelayInMs(double delayInMs);
-
+    inline double process(double input);
 
 private:
 
@@ -53,15 +68,14 @@ private:
     int m_nBufferSize;
     
     double alpha_;
-    double coeff_;
+    double coeff_;      //Allpass filter coefficiant
     bool doNextOut_;
     
     double xn_1;
     double yn_1;
 };
-//==============================================================================
-//INTERPOLATE
-//==============================================================================
+
+// Audio processing linear interpolation
 inline double DelayLineSimple::dLinTerp(double x1, double x2, double y1, double y2, double x)
 {
     double denom = x2 - x1;
@@ -78,6 +92,7 @@ inline double DelayLineSimple::dLinTerp(double x1, double x2, double y1, double 
     
 }
 
+// Audio processing allpass interpolation
 inline double DelayLineSimple::allPass(double xn)
 {
     //double xn = input;
@@ -87,9 +102,8 @@ inline double DelayLineSimple::allPass(double xn)
     return yn;
 }
 
-//==============================================================================
-//PROCESS
-//==============================================================================
+
+// Audio processing
 inline double DelayLineSimple::process(double input)
 {
     
