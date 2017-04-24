@@ -36,7 +36,7 @@ void SingleSample::set_pos(double p)
 }
 
 /// loop play
-void SingleSample::get_frame(int n, float* a)
+void SingleSample::get_frame(int n, double *a)
 {
     for(int i=0; i<n; i++)
     {
@@ -64,7 +64,7 @@ int SingleSample::get_L()
     return L;
 }
 
-float* SingleSample::get_x()
+double* SingleSample::get_x()
 {
     return x;
 }
@@ -93,7 +93,7 @@ void SingleSample::set_nChannels(int in)
 
 void SingleSample::initialize()
 {
-    x = new float[L*sizeof(float)];
+    x = new double[L*sizeof(double)];
 }
 
 double SingleSample::get_sample(int pos)

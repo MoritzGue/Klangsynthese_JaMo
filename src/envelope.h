@@ -11,7 +11,8 @@ using namespace std;
 typedef enum {
     ENVELOPE_SHAPE_RECT = 0,
     ENVELOPE_SHAPE_TRI,
-    ENVELOPE_SHAPE_SIN
+    ENVELOPE_SHAPE_SIN,
+    ENVELOPE_SHAPE_HAN
 }envType;
 
 class Envelope {
