@@ -42,7 +42,6 @@ namespace {
     std::vector<float> impuls (impulsArray, impulsArray + sizeof(impulsArray) / sizeof(impulsArray[0]));
 }
 
-
 class KarplusPoly: public JackCpp::AudioIO {
 
 private:
@@ -55,7 +54,7 @@ private:
     int noteStatus;
     int noteNumber;
     int velocity;
-    //float* ir_temp;
+    //float *ir_temp;
     //std::vector<float> ir;
 
 
@@ -95,15 +94,25 @@ public:
         reserveOutPorts(2);
         
         gitStrings = new StringManager();
-        /*
-        singleSample = new SingleSample("Guitarimpulse2.wav");
-        singleSample->initialize();
-        ir_temp = singleSample->get_x();
-        */
         
+        singleSample = new SingleSample("Guitarimpulse2.wav");
+        //float *ir_temp = singleSample->get_x();
+        
+        /*for (int i=0; i<40000;i++){
+            cout << ir_temp[i] <<endl;
+        
+        }*/
+        
+        //std::vector<float> ir_vector = ir_temp;
+        
+        //std::vector<float> ir_vector (ir_temp, ir_temp + sizeof(ir_temp) / sizeof(ir_temp[0]));
+        
+        //vector<float> ir_vector(ir_temp, ir_temp + sizeof(ir_temp));
+
         // initialize FFT-Convolution with IR
         fftconv.init(1024, impuls.data(), impuls.size());
-        //fftconv.init(1024, &ir_temp, sizeof(&ir_temp));
+        //fftconv.init(1024, ir_temp, sizeof(ir_temp));
+        //fftconv.init(1024, ir_vector.data(), ir_vector.size());
         
         midiMan = new MidiMan();
     }
