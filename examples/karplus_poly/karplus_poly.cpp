@@ -54,6 +54,7 @@ private:
     int noteStatus;
     int noteNumber;
     int velocity;
+    bool bypassConv = true;
     //float *ir_temp;
     //std::vector<float> ir;
 
@@ -77,8 +78,10 @@ public:
               // Synthesize Samples
               outBufs[0][frameCNT] = gitStrings->getNextSample()*0.2;
           }
+            
             // Convolution with guitar body IR
-            fftconv.process(&outBufs[0][0], &outBufs[0][0], nframes);
+            if (bypassConv == false)
+                fftconv.process(&outBufs[0][0], &outBufs[0][0], nframes);
         }
 
         ///return 0 on success
@@ -86,7 +89,7 @@ public:
     }
 
     /// Constructor
-    KarplusPoly() :
+    KarplusPoly(std::string s) :
     JackCpp::AudioIO("karplus_poly", 0,1)
     {
 
@@ -95,8 +98,9 @@ public:
         
         gitStrings = new StringManager();
         
-        singleSample = new SingleSample("Guitarimpulse2.wav");
-        //float *ir_temp = singleSample->get_x();
+        if ( s != "noir"){
+        singleSample = new SingleSample(s);
+        float *ir_temp = singleSample->get_x();
         
         /*for (int i=0; i<40000;i++){
             cout << ir_temp[i] <<endl;
@@ -110,10 +114,12 @@ public:
         //vector<float> ir_vector(ir_temp, ir_temp + sizeof(ir_temp));
 
         // initialize FFT-Convolution with IR
-        fftconv.init(1024, impuls.data(), impuls.size());
-        //fftconv.init(1024, ir_temp, sizeof(ir_temp));
+        //fftconv.init(1024, impuls.data(), impuls.size());
+        fftconv.init(1024, ir_temp, singleSample->get_L());
         //fftconv.init(1024, ir_vector.data(), ir_vector.size());
-        
+            bypassConv = false;
+        }
+            
         midiMan = new MidiMan();
     }
     
@@ -139,8 +145,16 @@ public:
 int main(int argc, char *argv[]){
 
 
+    if(argc<=1)
+    {
+        cout << "Pass path to wav-file as argument!" << endl;
+        return 0;
+    }
+    
+    std::string s(argv[1]);
+    
     /// initial ports from constructor created here.
-    KarplusPoly * t = new KarplusPoly();
+    KarplusPoly * t = new KarplusPoly(s);
 
     /// activate the client
     t->start();
