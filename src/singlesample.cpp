@@ -36,7 +36,7 @@ void SingleSample::set_pos(double p)
 }
 
 /// loop play
-void SingleSample::get_frame(int n, double *a)
+void SingleSample::get_frame(int n, float* a)
 {
     for(int i=0; i<n; i++)
     {
@@ -64,7 +64,7 @@ int SingleSample::get_L()
     return L;
 }
 
-double* SingleSample::get_x()
+float* SingleSample::get_x()
 {
     return x;
 }
@@ -93,7 +93,7 @@ void SingleSample::set_nChannels(int in)
 
 void SingleSample::initialize()
 {
-    x = new double[L*sizeof(double)];
+    x = new float[L*sizeof(float)];
 }
 
 double SingleSample::get_sample(int pos)
@@ -157,7 +157,7 @@ void SingleSample::read_wavefile(std::string filePath)
 
     initialize();
 
-    int num = sf_read_double  (sf,x,info.frames*info.channels);
+    int num = sf_read_float  (sf,x,info.frames*info.channels);
     sf_close(sf);
 
 }

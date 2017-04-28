@@ -48,11 +48,7 @@ void StringManager::setMidiData(MidiMan::midiMessage m){
             switch (m.byte2) {
                 case 1: //String bending
                 {
-                    double bending = mapMidiVelocity((double)m.byte3, -15.0,15.0);
-                    cout << "BEND" << bending << endl;
-                    for(int i = 0; i < NumberOfGitStrings; i++) {
-                        strings[i]->bendString(bending);
-                    }
+                    
                 }
                     break;
                 case 2: //feedback Gain Value
@@ -73,7 +69,7 @@ void StringManager::setMidiData(MidiMan::midiMessage m){
                     break;
                 case 4: // Sets the envelope duration
                 {
-                    double duration = mapMidiVelocity((double)m.byte3, 0.001,0.5);
+                    double duration = mapMidiVelocity((double)m.byte3, 0.001,0.25);
                     cout << "ENV DURATION" << duration << endl;
                     for(int i = 0; i < NumberOfGitStrings; i++) {
                         strings[i]->setEnvelopeDuration(duration);
@@ -106,6 +102,37 @@ void StringManager::setMidiData(MidiMan::midiMessage m){
                     }
                 }
                     break;
+                case 9: //Sustain
+                {
+                    if (m.byte3 > 0){
+                        cout << "SUSTAIN ON" << endl;
+                        for(int i = 0; i < NumberOfGitStrings; i++) {
+                            strings[i]->sustain = true;
+                        }
+                    }
+                    else{
+                        for(int i = 0; i < NumberOfGitStrings; i++) {
+                            strings[i]->sustain = false;
+                        }
+                        cout << "SUSTAIN OFF" << endl;
+                    }
+                }
+                    break;
+                case 10: //Release all Notes
+                {
+                    for (int i = 0; i < NumberOfGitStrings; i++) {
+                        strings[i]->releaseString();
+                    }
+                }
+                    break;
+                case 17: //String bending
+                {
+                    double bending = mapMidiVelocity((double)m.byte3, -15.0,15.0);
+                    cout << "BEND" << bending << endl;
+                    for(int i = 0; i < NumberOfGitStrings; i++) {
+                        strings[i]->bendString(bending);
+                    }
+                }
             
                 default:
                     break;
@@ -122,6 +149,11 @@ void StringManager::onNoteOn(int noteNumber, int velocity){
     
     // Find a free guitarstring
     for (int i = 0; i < NumberOfGitStrings; i++) {
+        
+        if (strings[i]->sustain == true && strings[i]->mNoteNumber == noteNumber)
+            strings[i]->isActive = false;
+            
+        
         if (!strings[i]->isActive) {
             strings[i]->setNoteNumber(noteNumber);
             strings[i]->mVelocity = velocity;
@@ -135,7 +167,7 @@ void StringManager::onNoteOn(int noteNumber, int velocity){
 
 void StringManager::onNoteOff(int noteNumber, int velocity){
     
-    // Find the guitarstring(s) with the given noteNumber:
+    // Find the guitarstring(s) with the given noteNumber and release it
     for (int i = 0; i < NumberOfGitStrings; i++) {
         if (strings[i]->isActive && strings[i]->mNoteNumber == noteNumber) {
             strings[i]->releaseString();
@@ -147,3 +179,4 @@ double StringManager::mapMidiVelocity (const int velocity, const double minVal, 
     
     return ((double)velocity - 0.0) * (maxVal - minVal) / (127.0 - 0.0) + minVal;
 }
+

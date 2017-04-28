@@ -4,6 +4,7 @@ Guitarstring::Guitarstring(){
     
     isActive = false;
     fadeOut = false;
+    sustain = false;
     
     oscillator1 = new Oscillator(OSCILLATOR_MODE_NOISE);
     oscillator1->setSampleRate(44100.0);
@@ -27,6 +28,7 @@ void Guitarstring::pluck(int velocity){
     
     // Calculate the frequency from given MIDI note number
     frequency = 440.00 * pow (2.0, (mNoteNumber - 69) / 12.0);
+
     
     // Reset the waveguides delay
     delayLine1->resetDelay();
@@ -117,6 +119,7 @@ void Guitarstring::releaseString(){
     fadeOut = true;
     //delayLine1->resetDelay();
     //cout << "RELEASE" << fadeOut << endl;
+
 }
 
 void Guitarstring::reset(){

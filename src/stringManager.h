@@ -27,7 +27,7 @@
 
 #include "guitarstring.h"
 #include "TPTFilter.h"
-#include "midimanOld.h"
+#include "midiman.h"
 
 using namespace std;
 

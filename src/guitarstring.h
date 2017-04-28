@@ -105,10 +105,11 @@ private:
     
     bool isActive;
     bool fadeOut;
+    bool sustain;
 };
 
 
-//Process
+//Process Audio
 inline double Guitarstring::getNextSample(){
 
     if (!isActive) return 0.0;
@@ -117,7 +118,7 @@ inline double Guitarstring::getNextSample(){
     double yn = delayLine1->process(loopFilter->process(delayLine1->lastOut()*dampGain + (oscillator1->nextSample() * envelopeGenerator->nextSample())));
     
     // Short fade out when releaseString() is called to avoid note-off crackling
-    if (fadeOut == true){
+    if (fadeOut == true && sustain == false){
         yn = yn * fadeGain;
         fadeGain = fadeGain - 0.001;
         if(fadeGain <= 0.0){
@@ -125,6 +126,7 @@ inline double Guitarstring::getNextSample(){
             fadeOut = false;
         }
     }
+    
     return yn;
 }
 #endif // GUITARSTRING_H
