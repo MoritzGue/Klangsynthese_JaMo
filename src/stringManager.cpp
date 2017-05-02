@@ -46,11 +46,6 @@ void StringManager::setMidiData(MidiMan::midiMessage m){
     switch (m.byte1) {
         case 176:
             switch (m.byte2) {
-                case 1: //String bending
-                {
-                    
-                }
-                    break;
                 case 2: //feedback Gain Value
                 {
                     double damping = mapMidiVelocity((double)m.byte3, 0.7,1.0);

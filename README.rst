@@ -3,6 +3,24 @@ klangsynthese
 
 This is the repository accompanying `Klangsynthese und -verarbeitung: Von der Theorie zur Programmierung <http://www.ak.tu-berlin.de/menue/lehre/wintersemester_201617/klangsynthese_und_verarbeitung_von_der_theorie_zur_programmierung/">`_.
 
+PROJECT
+_________
+This project is a physical modeling synthesizer implementing a polyphonic Karplus-Strong Algorithm with fractional allpass delay.
+Further features are: String bending, sustain mode, different excitation signals and burst window functions, a Wah-Wah filter and a FFTConvolution (guitar body IRs).
+
+To start the application enter a file path to a wav-file (your impulse response) or type "noir" to bypass the FFTConvolution. For now the IR length should not be longer than 3 seconds.
+
+MIDI control changes:
+* CC2: feedback gain value
+* CC3: sets the envelope shape (rect(default), tri, half-sine, hanning)
+* CC4: sets the envelope duration
+* CC5: sets oscillator mode (Sin, Saw, Square, Tri, Noise(default))
+* CC7: Wah-Wah cut-off
+* CC8: Wah-Wah Q
+* CC9: sustain on/off
+* CC10: release all notes
+* CC17: string bending (small variations of the main delay line length)
+
 Libraries
 _________
 The libraries needed for this to work properly are all installed on your `Raspberry Pi 3`_ (RPi3):
