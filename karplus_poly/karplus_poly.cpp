@@ -1,8 +1,9 @@
 /**
  * \file
  *
- * \brief This is the main file and implements a polyphonic Karplus-Strong Waveguide algorithm
- *
+ * \brief This is the main file and implements a polyphonic Karplus-Strong Waveguide algorithm.
+ *          When starting the application enter a wavefile path to an impulse response or type "noir" for
+ *          no convolution.
  *
  *
  * \author Moritz Gueldenring & Janek Newjoto
@@ -141,7 +142,7 @@ public:
 ///
 int main(int argc, char *argv[]){
 
-
+    
     if(argc<=1)
     {
         cout << "Pass path to wav-file as argument!" << endl;

@@ -11,8 +11,8 @@ The libraries needed for this to work properly are all installed on your `Raspbe
 * `jackcpp (website)`_ as jackcpp-git_ (AUR_)
 * `rtmidi (website)`_ as rtmidi_ (AUR_)
 * `libsndfile (website)`_ as libsndfile_ (ALARM_)
-* `yaml-cpp (website)`_ as yaml-cpp_ (ALARM_) 
-* `boost (website)`_ as boost_ (ALARM_) 
+* `yaml-cpp (website)`_ as yaml-cpp_ (ALARM_)
+* `boost (website)`_ as boost_ (ALARM_)
 
 Images
 ______
